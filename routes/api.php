@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\PermissionController;
-
+use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\UserController;
@@ -41,4 +41,6 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
 });
 
 Route::get('category-list', [CategoryController::class, 'getList']);
+
+Route::apiResource('/posts', PostController::class);
 
