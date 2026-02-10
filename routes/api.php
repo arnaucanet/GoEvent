@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::group(['middleware' => 'auth:sanctum'], function() {
+    
+    Route::apiResource('/posts', PostController::class);
 
     Route::apiResource('users', UserController::class);
     Route::post('users/updateimg', [UserController::class,'updateimg']);
@@ -41,6 +43,3 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
 });
 
 Route::get('category-list', [CategoryController::class, 'getList']);
-
-Route::apiResource('/posts', PostController::class);
-
