@@ -28,11 +28,11 @@ class PostController extends Controller
 
     public function store(Request $request)
     {
-        $this->authorize('post-edit');
+        //$this->authorize('post-edit');
 
         $data = $request->validate([
             'title' => ['required', 'string', 'max:255', 'min:2'],
-            'content' => ['required', 'string', 'min:2'],
+            'description' => ['required', 'string', 'min:2'],
             'categories' => 'required|array',
             'categories.*' => 'exists:categories,id',
         ]);
