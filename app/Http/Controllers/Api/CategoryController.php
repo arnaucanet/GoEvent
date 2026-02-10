@@ -11,18 +11,18 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        $categories = Category::all();
+        $categories = Category::all(); // Show all categories
         return $categories;
     }
 
     public function show(Category $category)
     {
-        return $category;
+        return $category; // Shows the category
     }
 
     public function destroy(Category $category)
     {
-        $category->delete();
+        $category->delete(); // Deletes the category
     }
 
     public function store(Request $request)
@@ -37,7 +37,7 @@ class CategoryController extends Controller
         ]);
 
         //$data['user_id'] =  auth()->user()->id;
-        $category = Category::create($data);
+        $category = Category::create($data); // Creates the category
         return $category;
     }
 
@@ -52,7 +52,7 @@ class CategoryController extends Controller
             'active' => ['sometimes', 'boolean'],
         ]);
 
-        $category->update($data); // Actualiza la categoría
+        $category->update($data); // Updates the category
 
         return $category;
     }
