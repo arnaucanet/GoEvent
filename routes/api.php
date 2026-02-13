@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\EventController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -45,3 +46,5 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
 
 Route::get('category-list', [CategoryController::class, 'getList']);
 Route::apiResource('/categories', CategoryController::class);
+Route::apiResource('/events', EventController::class);
+
