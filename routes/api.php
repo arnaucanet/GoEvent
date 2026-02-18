@@ -12,7 +12,9 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::group(['middleware' => 'auth:sanctum'], function() {
-    
+
+    Route::apiResource('/categories', CategoryController::class);
+    Route::apiResource('/events', EventController::class);
     Route::apiResource('/posts', PostController::class);
 
 
@@ -45,6 +47,5 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
 });
 
 Route::get('category-list', [CategoryController::class, 'getList']);
-Route::apiResource('/categories', CategoryController::class);
-Route::apiResource('/events', EventController::class);
+
 
