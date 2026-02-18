@@ -11,27 +11,25 @@ class EventController extends Controller
 {
     public function index()
     {
-        $events = Event::all();
+        $events = Event::with(['user', 'category'])->get();
         return $events;
     }
 
     public function show(Event $event)
     {
-        $event->load('user:id,name,surname1');
+        $event->load(['user', 'category']);
         return $event;
     }
 
     public function destroy(Event $event)
     {
         $event->delete();
+        return response()->json(['message' => 'Evento eliminado correctamente'], 200);
     }
 
     public function store(Request $request)
     {
-        //$this->authorize('post-edit');
-
         $data = $request->validate([
-            'user_id' => ['int'],
             'title' => ['required', 'string', 'max:255', 'min:2'],
             'description' => ['nullable', 'string', 'min:2'],
             'start_date' => ['required', 'date'],
@@ -39,18 +37,20 @@ class EventController extends Controller
             'capacity' => ['required', 'integer', 'min:1'],
             'featured' => ['boolean'],
             'status' => ['in:borrador,publicado,cancelado'],
+            'category_id' => ['required', 'exists:categories,id'],
         ]);
 
-        //$data['user_id'] =  auth()->user()->id;
+        $data['user_id'] = auth()->user()->id;
         
         $event = Event::create($data);
+
+        $event->load(['user', 'category']);
+        
         return $event;
     }
 
     public function update(Request $request, Event $event)
     {
-        // $this->authorize('event-edit');
-
         $data = $request->validate([
             'title' => ['sometimes', 'required', 'string', 'max:255', 'min:2'],
             'description' => ['sometimes', 'nullable', 'string', 'min:2'],
@@ -59,9 +59,12 @@ class EventController extends Controller
             'capacity' => ['sometimes', 'required', 'integer', 'min:1'],
             'featured' => ['sometimes', 'boolean'],
             'status' => ['sometimes', 'in:borrador,publicado,cancelado'],
+            'category_id' => ['sometimes', 'required', 'exists:categories,id'],
         ]);
 
         $event->update($data);
+
+        $event->load(['user', 'category']);
 
         return $event;
     }
