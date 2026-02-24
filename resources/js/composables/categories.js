@@ -41,13 +41,19 @@ export default function useCategories() {
   }
 
   const getCategories = async () => {
-    return await withLoading(async () => {
+    return withLoading(async () => {
       try {
         const response = await axios.get('/api/categories')
-        categories.value = response.data.data
-        categoryList.value = response.data.data.map(c => ({ id: c.id, name: c.name }))
+        
+        const data = response.data.data || response.data
+        
+        categories.value = data
+        if (Array.isArray(data)) {
+             categoryList.value = data.map(c => ({ id: c.id, name: c.name }))
+        }
       } catch (e) {
-        toast.error('Error loading categories')
+        console.error(e)
+        toast.error('Error loading categories') 
       }
     })
   }
