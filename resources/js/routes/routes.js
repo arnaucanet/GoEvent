@@ -156,6 +156,33 @@ export default [
                             hideBreadcrumb: true
                         }
                     },
+                    {
+                        name: 'categories.create',
+                        path: 'create',
+                        component: () => import('../views/admin/categories/Create.vue'),
+                        meta: {
+                            breadCrumb: 'Create category',
+                            hideBreadcrumb: true
+                        }
+                    },
+                    {
+                        name: 'categories.edit',
+                        path: '',
+                        component: () => import('../views/admin/categories/Index.vue'),
+                        meta: {
+                            breadCrumb: 'Edit category',
+                            hideBreadcrumb: true
+                        }
+                    },
+                    {
+                        name: 'categories.delete',
+                        path: '',
+                        component: () => import('../views/admin/categories/Index.vue'),
+                        meta: {
+                            breadCrumb: 'Delete category',
+                            hideBreadcrumb: true
+                        }
+                    }
                 ]
             },
 
