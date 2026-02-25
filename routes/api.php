@@ -22,7 +22,6 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
     Route::post('users/updateimg', [UserController::class,'updateimg']);
 
 
-    Route::apiResource('categories', CategoryController::class);
     Route::apiResource('roles', RoleController::class);
 
     Route::get('role-list', [RoleController::class, 'getList']);

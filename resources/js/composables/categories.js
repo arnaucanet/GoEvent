@@ -1,173 +1,141 @@
-import { ref } from 'vue'
-import * as yup from 'yup'
-import axios from 'axios'
-import { useToast } from './useToast'
-import { useValidation } from './useValidation'
+import { ref } from "vue";
+import * as yup from "yup";
+import axios from "axios";
+import { useRouter } from "vue-router";
+import { useToast } from "./useToast";
+import { useValidation } from "./useValidation";
 
 export default function useCategories() {
-  const categories = ref([])
-  const categoryList = ref([])
-  const initialCategory = { id: null, name: '' }
-  const category = ref({ ...initialCategory })
-  const isLoading = ref(false)
-  const toast = useToast()
+    const categories = ref([]);
+    const categoryList = ref([]);
+    const initialCategory = {
+        id: null,
+        name: "",
+        description: "",
+        active: false,
+    };
+    const category = ref({ ...initialCategory });
+    const isLoading = ref(false);
+    const toast = useToast();
+    const router = useRouter();
+    const {
+        errors,
+        validate,
+        handleRequestError,
+        clearErrors,
+        hasError,
+        getError,
+    } = useValidation();
 
-  const {
-    errors,
-    validate,
-    handleRequestError,
-    clearErrors,
-    hasError,
-    getError
-  } = useValidation()
+    const categorySchema = yup.object({
+        name: yup
+            .string()
+            .trim()
+            .required("The name is required")
+            .min(3, "Must be at least 3 characters long"),
+    });
 
-  const categorySchema = yup.object({
-    name: yup
-      .string()
-      .trim()
-      .required('El nombre es obligatorio')
-      .min(3, 'Debe tener al menos 3 caracteres')
-  })
+    const withLoading = async (fn) => {
+        if (isLoading.value) return;
+        isLoading.value = true;
+        try {
+            return await fn();
+        } finally {
+            isLoading.value = false;
+        }
+    };
 
-  const withLoading = async (fn) => {
-    if (isLoading.value) throw new Error('Operación en curso')
-    isLoading.value = true
-    try {
-      return await fn()
-    } finally {
-      isLoading.value = false
-    }
-  }
+    const getCategories = async () => {
+        return await withLoading(async () => {
+            try {
+                const response = await axios.get("/api/categories");
 
-  const resetCategory = () => {
-    category.value = { ...initialCategory }
-    clearErrors()
-  }
+                const data = response.data.data || response.data;
+                categories.value = data;
+                categoryList.value = data.map((c) => ({
+                    id: c.id,
+                    name: c.name,
+                }));
+            } catch (e) {
+                toast.error("Error loading categories");
+            }
+        });
+    };
 
-  const setCategory = (data = {}) => {
-    category.value = {
-      id: data.id ?? null,
-      name: data.name ?? ''
-    }
-    clearErrors()
-  }
+    const getCategory = async (id) => {
+        return await withLoading(async () => {
+            try {
+                const response = await axios.get(`/api/categories/${id}`);
+                category.value = response.data.data;
+            } catch (e) {
+                toast.error("Category not found");
+            }
+        });
+    };
 
-  const upsertCategoryRecord = (categoryRecord) => {
-    if (!categoryRecord?.id) return
-    categories.value = [
-      categoryRecord,
-      ...categories.value.filter(item => item.id !== categoryRecord.id)
-    ]
-  }
+    const createCategory = async (data) => {
+        clearErrors();
+        const isValid = await validate(categorySchema, data);
+        if (!isValid) return false;
 
-  const getCategories = async (params = {}) => {
-    const defaultParams = {
-      page: 1,
-      search_id: '',
-      search_title: '',
-      search_global: '',
-      order_column: 'created_at',
-      order_direction: 'desc'
-    }
+        return await withLoading(async () => {
+            try {
+                await axios.post("/api/categories", data);
+                toast.success("Category created successfully");
+                router.push({ name: "categories.index" });
+            } catch (e) {
+                handleRequestError(e);
+            }
+        });
+    };
 
-    const query = new URLSearchParams({ ...defaultParams, ...params }).toString()
-    const response = await axios.get(`/api/categories?${query}`)
-    categories.value = response.data?.data ?? response.data.data ?? []
-    return response
-  }
+    const updateCategory = async (id, data) => {
+        clearErrors();
+        const isValid = await validate(categorySchema, data);
+        if (!isValid) return false;
 
-  const getCategoryList = async () => {
-    try {
-      const response = await axios.get('/api/category-list')
-      categoryList.value = response.data?.data ?? response.data ?? []
-      return response
-    } catch (error) {
-      handleRequestError(error, {
-        fallbackMessage: 'No se pudo obtener la lista de categorías',
-        onGenericError: (message) => toast.error('Error', message)
-      })
-    }
-  }
+        return await withLoading(async () => {
+            try {
+                await axios.put(`/api/categories/${id}`, data);
+                toast.success("Category updated successfully");
+                router.push({ name: "categories.index" });
+            } catch (e) {
+                handleRequestError(e);
+            }
+        });
+    };
 
-  const createCategory = async () => {
-    const { isValid } = await validate(categorySchema, category.value)
-    if (!isValid) {
-      toast.error('Error de validación', 'Revisa los campos resaltados.')
-      throw new Error('Validación')
-    }
+    const destroyCategory = async (id) => {
+        return await withLoading(async () => {
+            try {
+                await axios.delete(`/api/categories/${id}`);
+                toast.success("Category deleted successfully");
+                await getCategories();
+            } catch (e) {
+                toast.error("Failed to delete category");
+            }
+        });
+    };
 
-    try {
-      const response = await withLoading(() =>
-        axios.post('/api/categories', { name: category.value.name })
-      )
-      const data = response.data?.data ?? response.data
-      toast.crud.created('Categoría')
-      return data
-    } catch (error) {
-      handleRequestError(error, {
-        fallbackMessage: 'No se pudo crear la categoría',
-        onValidationError: () =>
-          toast.error('Error de validación', 'Revisa los campos resaltados.'),
-        onGenericError: (message) => toast.error('Error', message)
-      })
-    }
-  }
+    const resetCategory = () => {
+        category.value = { ...initialCategory };
+        clearErrors();
+    };
 
-  const updateCategory = async () => {
-    const { isValid } = await validate(categorySchema, category.value)
-    if (!isValid) {
-      toast.error('Error de validación', 'Revisa los campos resaltados.')
-      throw new Error('Validación')
-    }
-
-    try {
-      const response = await withLoading(() =>
-        axios.put(`/api/categories/${category.value.id}`, {
-          name: category.value.name
-        })
-      )
-      const data = response.data?.data ?? response.data
-      toast.crud.updated('Categoría')
-      return data
-    } catch (error) {
-      handleRequestError(error, {
-        fallbackMessage: 'No se pudo actualizar la categoría',
-        onValidationError: () =>
-          toast.error('Error de validación', 'Revisa los campos resaltados.'),
-        onGenericError: (message) => toast.error('Error', message)
-      })
-    }
-  }
-
-  const deleteCategory = async (id) => {
-    try {
-      const response = await withLoading(() => axios.delete(`/api/categories/${id}`))
-      categories.value = categories.value.filter(item => item.id !== id)
-      toast.crud.deleted('Categoría')
-      return response
-    } catch (error) {
-      handleRequestError(error, {
-        fallbackMessage: 'No se pudo eliminar la categoría',
-        onGenericError: (message) => toast.error('Error', message)
-      })
-    }
-  }
-
-  return {
-    categories,
-    category,
-    categoryList,
-    isLoading,
-    errors,
-    hasError,
-    getError,
-    resetCategory,
-    setCategory,
-    upsertCategoryRecord,
-    getCategories,
-    getCategoryList,
-    createCategory,
-    updateCategory,
-    deleteCategory
-  }
+    return {
+        categories,
+        category,
+        categoryList,
+        isLoading,
+        errors,
+        hasError,
+        getError,
+        clearErrors,
+        getCategories,
+        getCategory,
+        createCategory,
+        updateCategory,
+        destroyCategory,
+        resetCategory,
+    };
 }
