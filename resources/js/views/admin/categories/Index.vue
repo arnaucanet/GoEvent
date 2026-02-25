@@ -2,20 +2,20 @@
   <div class="categories-page p-4">
     <div class="flex justify-between items-center mb-4">
       <h2 class="text-xl font-semibold">Gestión de Categorías</h2>
-      <Button 
-                        label="Actualizar" 
-                        icon="pi pi-refresh" 
-                        size="small" 
-                        outlined 
-                        severity="secondary" 
-                        :loading="isLoading" 
-                        @click="refreshCategories" 
-                    />
+       <Button
+        label="Actualizar"
+        icon="pi pi-refresh"
+        size="small"
+        outlined
+        severity="secondary"
+        :loading="isLoading"
+        @click="refreshCategories"
+      />
       <Button
         label="Nueva Categoría"
         icon="pi pi-plus"
         severity="primary"
-        @click="router.push('/admin/categories/create')" 
+        @click="router.push('/admin/categories/create')"
       />
     </div>
 
