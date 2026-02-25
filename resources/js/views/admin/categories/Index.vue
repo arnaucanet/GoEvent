@@ -82,7 +82,7 @@
         <InputText v-model="category.name" :class="{ 'p-invalid': hasError('name') }" />
         <small v-if="hasError('name')" class="text-red-500">{{ getError('name') }}</small>
         <label>Descripción</label>
-        <InputText v-model="category.description" :class="{ 'p-invalid': hasError('description') }" rows="3" />
+        <InputText v-model="category.description" :class="{ 'p-invalid': hasError('description') }" />
         <small v-if="hasError('description')" class="text-red-500">{{ getError('description') }}</small>
           <div class="flex flex-col gap-2">
             <label class="font-bold">Estado</label>
@@ -161,9 +161,9 @@ const closeDialog = () => {
 
 const submitForm = async () => {
   if (dialogType.value === 'create') {
-    await createCategory({ name: category.value.name });
+    await createCategory({ name: category.value.name, description: category.value.description, active: category.value.active });
   } else {
-    await updateCategory(category.value.id, { name: category.value.name });
+    await updateCategory(category.value.id, { name: category.value.name, description: category.value.description, active: category.value.active });
   }
   await getCategories();
   closeDialog();
