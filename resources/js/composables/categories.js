@@ -1,136 +1,141 @@
-import { ref } from 'vue'
-import * as yup from 'yup'
-import axios from 'axios'
-import { useRouter } from 'vue-router'
-import { useToast } from './useToast'
-import { useValidation } from './useValidation'
+import { ref } from "vue";
+import * as yup from "yup";
+import axios from "axios";
+import { useRouter } from "vue-router";
+import { useToast } from "./useToast";
+import { useValidation } from "./useValidation";
 
 export default function useCategories() {
-  const categories = ref([])
-  const categoryList = ref([])
-  const initialCategory = { id: null, name: '' }
-  const category = ref({ ...initialCategory })
-  const isLoading = ref(false)
-  const toast = useToast()
-  const router = useRouter()
-  const {
-    errors,
-    validate,
-    handleRequestError,
-    clearErrors,
-    hasError,
-    getError
-  } = useValidation()
+    const categories = ref([]);
+    const categoryList = ref([]);
+    const initialCategory = {
+        id: null,
+        name: "",
+        description: "",
+        active: false,
+    };
+    const category = ref({ ...initialCategory });
+    const isLoading = ref(false);
+    const toast = useToast();
+    const router = useRouter();
+    const {
+        errors,
+        validate,
+        handleRequestError,
+        clearErrors,
+        hasError,
+        getError,
+    } = useValidation();
 
-  const categorySchema = yup.object({
-    name: yup
-      .string()
-      .trim()
-      .required('The name is required')
-      .min(3, 'Must be at least 3 characters long')
-  })
+    const categorySchema = yup.object({
+        name: yup
+            .string()
+            .trim()
+            .required("The name is required")
+            .min(3, "Must be at least 3 characters long"),
+    });
 
-  const withLoading = async (fn) => {
-    if (isLoading.value) return 
-    isLoading.value = true
-    try {
-      return await fn()
-    } finally {
-      isLoading.value = false
-    }
-  }
+    const withLoading = async (fn) => {
+        if (isLoading.value) return;
+        isLoading.value = true;
+        try {
+            return await fn();
+        } finally {
+            isLoading.value = false;
+        }
+    };
 
-  const getCategories = async () => {
-    return await withLoading(async () => {
-      try {
+    const getCategories = async () => {
+        return await withLoading(async () => {
+            try {
+                const response = await axios.get("/api/categories");
 
-        
-        const response = await axios.get('/api/categories')
+                const data = response.data.data || response.data;
+                categories.value = data;
+                categoryList.value = data.map((c) => ({
+                    id: c.id,
+                    name: c.name,
+                }));
+            } catch (e) {
+                toast.error("Error loading categories");
+            }
+        });
+    };
 
-        const data = response.data.data || response.data
-        categories.value = data
-        categoryList.value = data.map(c => ({ id: c.id, name: c.name }))
-      } catch (e) {
-        toast.error('Error loading categories')
-      }
-    })
-  }
+    const getCategory = async (id) => {
+        return await withLoading(async () => {
+            try {
+                const response = await axios.get(`/api/categories/${id}`);
+                category.value = response.data.data;
+            } catch (e) {
+                toast.error("Category not found");
+            }
+        });
+    };
 
+    const createCategory = async (data) => {
+        clearErrors();
+        const isValid = await validate(categorySchema, data);
+        if (!isValid) return false;
 
-  const getCategory = async (id) => {
-    return await withLoading(async () => {
-      try {
-        const response = await axios.get(`/api/categories/${id}`)
-        category.value = response.data.data
-      } catch (e) {
-        toast.error('Category not found')
-      }
-    })
-  }
+        return await withLoading(async () => {
+            try {
+                await axios.post("/api/categories", data);
+                toast.success("Category created successfully");
+                router.push({ name: "categories.index" });
+            } catch (e) {
+                handleRequestError(e);
+            }
+        });
+    };
 
-  const createCategory = async (data) => {
-    clearErrors()
-    const isValid = await validate(categorySchema, data)
-    if (!isValid) return false
+    const updateCategory = async (id, data) => {
+        clearErrors();
+        const isValid = await validate(categorySchema, data);
+        if (!isValid) return false;
 
-    return await withLoading(async () => {
-      try {
-        await axios.post('/api/categories', data)
-        toast.success('Category created successfully')
-        router.push({ name: 'categories.index' })
-      } catch (e) {
-        handleRequestError(e)
-      }
-    })
-  }
+        return await withLoading(async () => {
+            try {
+                await axios.put(`/api/categories/${id}`, data);
+                toast.success("Category updated successfully");
+                router.push({ name: "categories.index" });
+            } catch (e) {
+                handleRequestError(e);
+            }
+        });
+    };
 
-  const updateCategory = async (id, data) => {
-    clearErrors()
-    const isValid = await validate(categorySchema, data)
-    if (!isValid) return false
+    const destroyCategory = async (id) => {
+        return await withLoading(async () => {
+            try {
+                await axios.delete(`/api/categories/${id}`);
+                toast.success("Category deleted successfully");
+                await getCategories();
+            } catch (e) {
+                toast.error("Failed to delete category");
+            }
+        });
+    };
 
-    return await withLoading(async () => {
-      try {
-        await axios.put(`/api/categories/${id}`, data)
-        toast.success('Category updated successfully')
-        router.push({ name: 'categories.index' })
-      } catch (e) {
-        handleRequestError(e)
-      }
-    })
-  }
+    const resetCategory = () => {
+        category.value = { ...initialCategory };
+        clearErrors();
+    };
 
-  const destroyCategory = async (id) => {
-    return await withLoading(async () => {
-      try {
-        await axios.delete(`/api/categories/${id}`)
-        toast.success('Category deleted successfully')
-        await getCategories()
-      } catch (e) {
-        toast.error('Failed to delete category')
-      }
-    })
-  }
-
-  const resetCategory = () => {
-    category.value = { ...initialCategory }
-    clearErrors()
-  }
-
-  return {
-    categories,
-    category,
-    categoryList,
-    isLoading,
-    errors,
-    hasError,
-    getError,
-    clearErrors,
-    getCategories,
-    getCategory,
-    createCategory,
-    updateCategory,
-    destroyCategory,
-    resetCategory
-  }
+    return {
+        categories,
+        category,
+        categoryList,
+        isLoading,
+        errors,
+        hasError,
+        getError,
+        clearErrors,
+        getCategories,
+        getCategory,
+        createCategory,
+        updateCategory,
+        destroyCategory,
+        resetCategory,
+    };
 }

@@ -2,11 +2,20 @@
   <div class="categories-page p-4">
     <div class="flex justify-between items-center mb-4">
       <h2 class="text-xl font-semibold">Gestión de Categorías</h2>
+      <Button 
+                        label="Actualizar" 
+                        icon="pi pi-refresh" 
+                        size="small" 
+                        outlined 
+                        severity="secondary" 
+                        :loading="isLoading" 
+                        @click="refreshCategories" 
+                    />
       <Button
         label="Nueva Categoría"
         icon="pi pi-plus"
         severity="primary"
-        @click="openCreateDialog"
+        @click="router.push('/admin/categories/create')" 
       />
     </div>
 
@@ -69,6 +78,8 @@
 import { ref, reactive, computed, onMounted } from 'vue';
 import { useToast } from '@/composables/useToast';
 import useCategories from '@/composables/categories';
+import { useRouter } from "vue-router";
+
 
 const {
   categories,
@@ -82,6 +93,8 @@ const {
   getError,
   isLoading
 } = useCategories();
+
+const router = useRouter()
 
 const dialogOpen = ref(false);
 const dialogType = ref('create');
@@ -99,6 +112,12 @@ const openEditDialog = (cat) => {
   dialogOpen.value = true;
 };
 
+const refreshCategories = () => {
+    isLoading.value = true;
+    getCategories().finally(() => {
+        isLoading.value = false;
+    });
+};
 const closeDialog = () => {
   resetCategory();
   dialogOpen.value = false;

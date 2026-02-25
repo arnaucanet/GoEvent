@@ -94,7 +94,7 @@ const router = useRouter()
 
 const {
     category,
-    storeCategory,
+    createCategory,
     resetCategory,
     validationErrors,
     errors,
@@ -106,10 +106,11 @@ onMounted(() => {
 })
 
 async function submitForm() {
-    try {
-        await storeCategory()
+    const success = await createCategory(category.value)
+
+    if (success !== false) {
         router.push({ name: 'categories.index' })
-    } catch (error) {
     }
 }
+
 </script>
