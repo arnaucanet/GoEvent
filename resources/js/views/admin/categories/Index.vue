@@ -37,21 +37,10 @@
       <Column field="description" header="Descripción" sortable />
 
       <!-- Created At -->
-      <Column field="created_at" header="Creado" sortable style="width: 15%">
-        <template #body="{ data }">
-          {{ formatDate(data.created_at) }}
-        </template>
-      </Column>
+      <Column field="created_at" header="Creado" sortable />
 
       <!-- Active -->
-      <Column field="active" header="Estado" sortable style="width: 10%">
-        <template #body="{ data }">
-          <Tag 
-            :value="data.active ? 'Activo' : 'Inactivo'" 
-            :severity="data.active ? 'success' : 'danger'" 
-          />
-        </template>
-      </Column>
+      <Column field="active" header="Activo" sortable />
 
 
       <!-- Acciones -->
@@ -133,10 +122,12 @@ const openEditDialog = (cat) => {
   dialogOpen.value = true;
 };
 
-const refreshCategories =  async() => {
-    await getCategories();
+const refreshCategories = () => {
+    isLoading.value = true;
+    getCategories().finally(() => {
+        isLoading.value = false;
+    });
 };
-
 const closeDialog = () => {
   resetCategory();
   dialogOpen.value = false;
@@ -156,7 +147,6 @@ const confirmDeleteCategory = async (id) => {
   if (!confirm('¿Deseas eliminar esta categoría?')) return;
   await destroyCategory(id);
   await getCategories();
-
 };
 
 onMounted(getCategories);
