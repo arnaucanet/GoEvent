@@ -37,10 +37,21 @@
       <Column field="description" header="Descripción" sortable />
 
       <!-- Created At -->
-      <Column field="created_at" header="Creado" sortable />
+      <Column field="created_at" header="Creado" sortable style="width: 15%">
+        <template #body="{ data }">
+          {{ formatDate(data.created_at) }}
+        </template>
+      </Column>
 
       <!-- Active -->
-      <Column field="active" header="Activo" sortable />
+      <Column field="active" header="Estado" sortable style="width: 10%">
+        <template #body="{ data }">
+          <Tag 
+            :value="data.active ? 'Activo' : 'Inactivo'" 
+            :severity="data.active ? 'success' : 'danger'" 
+          />
+        </template>
+      </Column>
 
 
       <!-- Acciones -->
