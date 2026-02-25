@@ -37,7 +37,11 @@
       <Column field="description" header="Descripción" sortable />
 
       <!-- Created At -->
-      <Column field="created_at" header="Creado" sortable />
+      <Column field="created_at" header="Creado" sortable>
+          <template #body="slotProps">
+              {{ formatDate(slotProps.data.created_at) }}
+          </template>
+      </Column>
 
       <!-- Active -->
       <Column field="active" header="Activo" sortable />
@@ -147,6 +151,15 @@ const confirmDeleteCategory = async (id) => {
   if (!confirm('¿Deseas eliminar esta categoría?')) return;
   await destroyCategory(id);
   await getCategories();
+};
+
+const formatDate = (dateStr) => {
+  const date = new Date(dateStr);
+  return date.toLocaleDateString('es-ES', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  });
 };
 
 onMounted(getCategories);
