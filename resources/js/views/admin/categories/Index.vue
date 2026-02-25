@@ -82,12 +82,19 @@
         <InputText v-model="category.name" :class="{ 'p-invalid': hasError('name') }" />
         <small v-if="hasError('name')" class="text-red-500">{{ getError('name') }}</small>
         <label>Descripción</label>
-        <InputTextarea v-model="category.description" :class="{ 'p-invalid': hasError('description') }" rows="3" />
+        <InputText v-model="category.description" :class="{ 'p-invalid': hasError('description') }" rows="3" />
         <small v-if="hasError('description')" class="text-red-500">{{ getError('description') }}</small>
-        <label>
-          Estado
-          <InputSwitch v-model="category.active" class="ml-2" />
-        </label>
+          <div class="flex flex-col gap-2">
+            <label class="font-bold">Estado</label>
+              <Select 
+                v-model="category.active" 
+                :options="statusOptions" 
+                optionLabel="label" 
+                optionValue="value" 
+                placeholder="Selecciona un estado" 
+                class="w-full"
+              />
+          </div>
       </div>
 
       <template #footer>
@@ -105,6 +112,7 @@
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue';
 import { useToast } from '@/composables/useToast';
+import Select from 'primevue/select';
 import useCategories from '@/composables/categories';
 import { useRouter } from "vue-router";
 
@@ -177,6 +185,11 @@ const formatDate = (dateStr) => {
     minute: '2-digit'
   });
 };
+
+const statusOptions = ref([
+  { label: 'Activa', value: 1 },
+  { label: 'Inactiva', value: 0 }
+]);
 
 onMounted(getCategories);
 </script>
