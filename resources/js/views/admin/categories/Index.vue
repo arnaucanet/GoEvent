@@ -136,6 +136,7 @@ const submitForm = async () => {
 const confirmDeleteCategory = async (id) => {
   if (!confirm('¿Deseas eliminar esta categoría?')) return;
   await destroyCategory(id);
+  await getCategories();
 };
 
 onMounted(getCategories);
