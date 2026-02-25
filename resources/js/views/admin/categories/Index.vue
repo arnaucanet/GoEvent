@@ -75,12 +75,19 @@
       </Column>
     </DataTable>
 
-    <!-- Dialog Crear/Editar -->
+    <!-- Dialog Editar -->
     <Dialog v-model:visible="dialogOpen" modal :header="dialogTitle" style="width:400px">
       <div class="flex flex-col gap-4">
         <label>Nombre de la categoría</label>
         <InputText v-model="category.name" :class="{ 'p-invalid': hasError('name') }" />
         <small v-if="hasError('name')" class="text-red-500">{{ getError('name') }}</small>
+        <label>Descripción</label>
+        <InputTextarea v-model="category.description" :class="{ 'p-invalid': hasError('description') }" rows="3" />
+        <small v-if="hasError('description')" class="text-red-500">{{ getError('description') }}</small>
+        <label>
+          Estado
+          <InputSwitch v-model="category.active" class="ml-2" />
+        </label>
       </div>
 
       <template #footer>
