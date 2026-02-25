@@ -59,15 +59,36 @@
                         {{ message }}
                     </div>
                 </div>
+                
             </div>
-
-            <div class="mb-4">
+            <div class="mb-3">
                 <div class="flex items-center gap-3">
-                    <label for="category-active" class="w-32">Active:</label>
-                    <InputSwitch v-model="category.active" />
+                    <label for="category-Estado" class="w-32">Estado:</label>
+                    <Select 
+                    v-model="category.active" 
+                    :options="statusOptions" 
+                    optionLabel="label" 
+                    optionValue="value" 
+                    placeholder="Selecciona un estado" 
+                    class="w-full"
+                    />
                 </div>
-            </div>
 
+                <div class="text-red-400 mt-1">
+                    {{ errors.description }}
+                </div>
+
+                <div class="mt-1">
+                    <div
+                        v-for="message in validationErrors?.active"
+                        :key="message"
+                        class="text-red-400"
+                    >
+                        {{ message }}
+                    </div>
+                </div>
+                
+            </div>
             <div class="mt-4 text-right flex justify-end gap-2">
                 <RouterLink :to="{ name: 'categories.index' }">
                     <Button severity="secondary" type="button">
@@ -89,6 +110,7 @@
 import { onMounted } from "vue"
 import { useRouter } from "vue-router"
 import useCategories from "@/composables/categories"
+import { ref } from 'vue'
 
 const router = useRouter()
 
@@ -112,5 +134,10 @@ async function submitForm() {
         router.push({ name: 'categories.index' })
     }
 }
+
+const statusOptions = ref([
+  { label: 'Activa', value: 1 },
+  { label: 'Inactiva', value: 0 }
+]);
 
 </script>
