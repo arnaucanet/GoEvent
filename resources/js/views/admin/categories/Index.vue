@@ -33,6 +33,16 @@
       <!-- Name -->
       <Column field="name" header="Nombre" sortable />
 
+      <!-- Description -->
+      <Column field="description" header="Descripción" sortable />
+
+      <!-- Created At -->
+      <Column field="created_at" header="Creado" sortable />
+
+      <!-- Active -->
+      <Column field="active" header="Activo" sortable />
+
+
       <!-- Acciones -->
       <Column header="Acciones">
         <template #body="{ data }">
