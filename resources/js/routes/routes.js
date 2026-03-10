@@ -169,6 +169,50 @@ export default [
             },
 
             {
+                name: 'events',
+                path: 'events',
+                meta: { breadCrumb: 'Events' },
+                children: [
+                    {
+                        name: 'events.index',
+                        path: '',
+                        component: () => import('../views/admin/events/Index.vue'),
+                        meta: {
+                            breadCrumb: 'View events',
+                            hideBreadcrumb: true
+                        }
+                    },
+                    {
+                        name: 'events.create',
+                        path: 'create',
+                        component: () => import('../views/admin/events/Create.vue'),
+                        meta: {
+                            breadCrumb: 'Create event',
+                            hideBreadcrumb: true
+                        }
+                    },
+                    {
+                        name: 'events.edit',
+                        path: 'edit/:id',
+                        component: () => import('../views/admin/events/Edit.vue'),
+                        meta: {
+                            breadCrumb: 'Edit event',
+                            hideBreadcrumb: true
+                        }
+                    },
+                    {
+                        name: 'events.show',
+                        path: 'show/:id',
+                        component: () => import('../views/admin/events/Show.vue'),
+                        meta: {
+                            breadCrumb: 'Show event',
+                            hideBreadcrumb: true
+                        }
+                    }
+                ]
+            },
+
+            {
                 name: 'permissions',
                 path: 'permissions',
                 meta: { breadCrumb: 'Permisos' },
