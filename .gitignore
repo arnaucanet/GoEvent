@@ -18,4 +18,3 @@ composer.lock
 yarn.lock
 /storage/media-library/temp
 .env
-.env
