@@ -47,7 +47,7 @@
       <Column field="active" header="Activo" sortable>
         <template #body="slotProps">
           <Tag 
-            :value="slotProps.data.active ? 'Activo' : 'Inactivo'" 
+            :value="slotProps.data.active ? 'Activa' : 'Inactiva'" 
             :severity="slotProps.data.active ? 'success' : 'danger'" 
           />
         </template>

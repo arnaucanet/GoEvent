@@ -33,7 +33,7 @@ class CategoryController extends Controller
             'name' => ['required', 'string', 'max:255', 'min:2'],
             'description' => ['required', 'string', 'min:2'],
             'icon' => ['nullable', 'string'],
-            'active' => ['boolean'],
+            'active' => ['required','boolean'],
         ]);
 
         //$data['user_id'] =  auth()->user()->id;

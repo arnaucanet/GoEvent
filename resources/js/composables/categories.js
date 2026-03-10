@@ -33,6 +33,10 @@ export default function useCategories() {
             .trim()
             .required("The name is required")
             .min(3, "Must be at least 3 characters long"),
+        active: yup
+            .number()
+            .typeError("Select Status")
+            .required("Status is required")
     });
 
     const withLoading = async (fn) => {
