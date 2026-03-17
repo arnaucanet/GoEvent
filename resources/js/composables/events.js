@@ -9,10 +9,14 @@ export default function useEvents() {
     const events = ref([]);
     const eventsList = ref([]);
     const initialEvent = {
-        id: null,
-        name: "",
+        title: "",
         description: "",
-        active: false,
+        start_date: "",
+        end_date: "",
+        capacity: "",
+        featured: 0,
+        status: 1,
+        category_id: "",
     };
     const event = ref({ ...initialEvent });
     const isLoading = ref(false);
@@ -28,15 +32,34 @@ export default function useEvents() {
     } = useValidation();
 
     const eventSchema = yup.object({
-        name: yup
+        title: yup
             .string()
             .trim()
-            .required("The name is required")
+            .required("The title is required")
             .min(3, "Must be at least 3 characters long"),
-        active: yup
+        description: yup
+            .string()
+            .required("The description is required"),
+        start_date: yup
+            .string()
+            .required("Start date is required"),
+        end_date: yup
+            .string()
+            .required("End date is required"),
+        capacity: yup
             .number()
-            .typeError("Select Status")
-            .required("Status is required")
+            .typeError("Capacity must be a number")
+            .required("Capacity is required")
+            .positive("Capacity must be positive")
+            .integer("Capacity must be an integer"),
+        category_id: yup
+            .number()
+            .typeError("Select Category")
+            .required("Category is required"),
+        status: yup
+            .boolean(),
+        featured: yup
+            .boolean()
     });
 
     const withLoading = async (fn) => {

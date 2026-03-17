@@ -1,6 +1,6 @@
 <template>
     <Panel class="flex flex-col justify-center my-10">
-        <h2 class="mb-4 text-xl font-semibold">Create Event</h2>
+        <h2 class="mb-4 text-xl font-semibold">Edit Event</h2>
 
         <form @submit.prevent="submitForm">
 
@@ -127,7 +127,7 @@
                     <label for="event-status" class="w-32">Status:</label>
                     <Select 
                         v-model="event.status" 
-                        :options="[{label: 'Active', value: 1}, {label: 'Inactive', value: 0}]" 
+                        :options="statusOptions" 
                         optionLabel="label" 
                         optionValue="value" 
                         placeholder="Select status"
@@ -149,7 +149,7 @@
 
                 <Button :disabled="isLoading" type="submit">
                     <span v-if="isLoading">Saving...</span>
-                    <span v-else>Save</span>
+                    <span v-else>Update</span>
                 </Button>
             </div>
 
@@ -159,15 +159,17 @@
 
 <script setup>
 import { onMounted } from "vue"
+import { useRoute } from "vue-router"
 import useEvents from "@/composables/events"
 import useCategories from "@/composables/categories"
 
+const route = useRoute()
 const {
     event,
-    createEvent,
-    resetEvent,
+    getEvent,
+    updateEvent,
     isLoading,
-    errors,
+    errors, 
 } = useEvents()
 
 const {
@@ -175,12 +177,23 @@ const {
     getCategories
 } = useCategories()
 
-onMounted(() => {
-    resetEvent()
-    getCategories()
+onMounted(async () => {
+    await getCategories()
+    await getEvent(route.params.id)
+    // Format dates for datetime-local input
+    if (event.value.start_date) event.value.start_date = event.value.start_date.substring(0, 16).replace(' ', 'T');
+    if (event.value.end_date) event.value.end_date = event.value.end_date.substring(0, 16).replace(' ', 'T');
+    // Ensure featured is boolean
+    event.value.featured = !!event.value.featured;
 })
 
 const submitForm = async () => {
-    await createEvent(event.value)
+    await updateEvent(event.value.id, event.value)
 }
+
+const statusOptions = [
+    { label: 'Borrador', value: 'borrador' },
+    { label: 'Publicado', value: 'publicado' },
+    { label: 'Cancelado', value: 'cancelado' }
+]
 </script>
