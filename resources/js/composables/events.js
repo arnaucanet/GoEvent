@@ -93,7 +93,7 @@ export default function useEvents() {
         return await withLoading(async () => {
             try {
                 const response = await axios.get(`/api/events/${id}`);
-                event.value = response.data.data;
+                event.value = response.data.data || response.data;
             } catch (e) {
                 toast.error("Event not found");
             }
