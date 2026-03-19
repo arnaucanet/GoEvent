@@ -57,9 +57,12 @@ export default function useEvents() {
             .typeError("Select Category")
             .required("Category is required"),
         status: yup
-            .boolean(),
+            .string()
+            .oneOf(['borrador', 'publicado', 'cancelado'], 'Status must be borrador, publicado, or cancelado')
+            .required('Status is required'),
         featured: yup
             .boolean()
+            .required('Featured is required')
     });
 
     const withLoading = async (fn) => {
@@ -103,7 +106,7 @@ export default function useEvents() {
     const createEvent = async (data) => {
         clearErrors();
         const isValid = await validate(eventSchema, data);
-        if (!isValid) return false;
+        if (!isValid.isValid) return false;
 
         return await withLoading(async () => {
             try {
@@ -119,7 +122,7 @@ export default function useEvents() {
     const updateEvent = async (id, data) => {
         clearErrors();
         const isValid = await validate(eventSchema, data);
-        if (!isValid) return false;
+        if (!isValid.isValid) return false;
 
         return await withLoading(async () => {
             try {

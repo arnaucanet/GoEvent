@@ -43,6 +43,9 @@
           </template>
       </Column>
 
+      <Column field="capacity" header="Capacity" sortable></Column>
+      
+
       <!-- Active -->
       <Column field="active" header="Activo" sortable>
         <template #body="slotProps">

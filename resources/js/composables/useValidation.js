@@ -63,6 +63,23 @@ export function useValidation() {
     })
   }
 
+  const handleRequestError = (error) => {
+    if (error?.response?.status === 422) {
+      const serverErrors = error.response.data.errors || {}
+      Object.entries(serverErrors).forEach(([field, messages]) => {
+        setFieldError(field, Array.isArray(messages) ? messages[0] : messages)
+      })
+      return
+    }
+
+    if (error?.response?.data?.message) {
+      errors.value.general = error.response.data.message
+      return
+    }
+
+    errors.value.general = 'An unexpected error occurred'
+  }
+
   const clearErrors = () => { errors.value = {} }
   const hasError = (field) => field.includes('.') ? !!errors.value[field.split('.')[0]]?.[field.split('.')[1]] : !!errors.value[field]
   const getError = (field) => field.includes('.') ? errors.value[field.split('.')[0]]?.[field.split('.')[1]] : errors.value[field]
@@ -75,6 +92,7 @@ export function useValidation() {
     setFieldError,
     clearFieldError,
     clearErrors,
+    handleRequestError,
     hasError,
     getError,
     hasErrors
