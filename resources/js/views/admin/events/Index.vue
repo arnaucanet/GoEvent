@@ -61,7 +61,7 @@
             icon="pi pi-pencil"
             text
             size="small"
-            @click="openEditDialog(data)"
+            @click="router.push({ name: 'events.edit', params: { id: data.id } })"
           />
           <Button
             icon="pi pi-trash"
@@ -75,37 +75,6 @@
       </Column>
     </DataTable>
 
-    <!-- Dialog Editar -->
-    <Dialog v-model:visible="dialogOpen" modal :header="dialogTitle" style="width:400px">
-      <div class="flex flex-col gap-4">
-        <label>Titulo del evento</label>
-        <InputText v-model="event.title" :class="{ 'p-invalid': hasError('title') }" />
-        <small v-if="hasError('title')" class="text-red-500">{{ getError('title') }}</small>
-        <label>Descripción</label>
-        <InputText v-model="event.description" :class="{ 'p-invalid': hasError('description') }" />
-        <small v-if="hasError('description')" class="text-red-500">{{ getError('description') }}</small>
-          <div class="flex flex-col gap-2">
-            <label class="font-bold">Estado</label>
-              <Select 
-                v-model="event.active" 
-                :options="statusOptions" 
-                optionLabel="label" 
-                optionValue="value" 
-                placeholder="Selecciona un estado" 
-                class="w-full"
-              />
-          </div>
-      </div>
-
-      <template #footer>
-        <Button label="Cancelar" severity="secondary" @click="closeDialog" />
-        <Button
-          :label="dialogType === 'create' ? 'Crear' : 'Guardar'"
-          :loading="isLoading"
-          @click="submitForm"
-        />
-      </template>
-    </Dialog>
   </div>
 </template>
 
