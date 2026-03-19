@@ -80,7 +80,7 @@ export default function useCategories() {
     const createCategory = async (data) => {
         clearErrors();
         const isValid = await validate(categorySchema, data);
-        if (!isValid) return false;
+        if (!isValid.isValid) return false;
 
         return await withLoading(async () => {
             try {
@@ -96,7 +96,7 @@ export default function useCategories() {
     const updateCategory = async (id, data) => {
         clearErrors();
         const isValid = await validate(categorySchema, data);
-        if (!isValid) return false;
+        if (!isValid.isValid) return false;
 
         return await withLoading(async () => {
             try {

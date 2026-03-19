@@ -160,11 +160,18 @@ const closeDialog = () => {
 };
 
 const submitForm = async () => {
+  const data = {
+    name: category.value.name,
+    description: category.value.description || null,
+    active: category.value.active
+  };
+
   if (dialogType.value === 'create') {
-    await createCategory({ name: category.value.name, description: category.value.description, active: category.value.active });
+    await createCategory(data);
   } else {
-    await updateCategory(category.value.id, { name: category.value.name, description: category.value.description, active: category.value.active });
+    await updateCategory(category.value.id, data);
   }
+
   await getCategories();
   closeDialog();
 };

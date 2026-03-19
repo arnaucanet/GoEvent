@@ -31,7 +31,7 @@ class CategoryController extends Controller
 
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255', 'min:2'],
-            'description' => ['required', 'string', 'min:2'],
+            'description' => ['nullable', 'string', 'min:2'],
             'icon' => ['nullable', 'string'],
             'active' => ['required','boolean'],
         ]);
@@ -47,7 +47,7 @@ class CategoryController extends Controller
 
         $data = $request->validate([
             'name' => ['sometimes', 'required', 'string', 'max:255', 'min:2'],
-            'description' => ['sometimes', 'required', 'string', 'min:2'],
+            'description' => ['sometimes', 'nullable', 'string', 'min:2'],
             'icon' => ['sometimes', 'nullable', 'string'],
             'active' => ['sometimes', 'boolean'],
         ]);
