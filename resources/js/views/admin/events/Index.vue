@@ -2,6 +2,7 @@
   <div class="events-page p-4">
     <div class="flex justify-between items-center mb-4">
       <h2 class="text-xl font-semibold">Gestión de Eventos</h2>
+      
        <Button
         label="Actualizar"
         icon="pi pi-refresh"
@@ -12,6 +13,7 @@
         @click="refreshEvents"
       />
       <Button
+        v-if="can('events-create')"
         label="Nuevo Evento"
         icon="pi pi-plus"
         severity="primary"
@@ -61,12 +63,14 @@
       <Column header="Acciones">
         <template #body="{ data }">
           <Button
+            v-if="can('events-edit')"
             icon="pi pi-pencil"
             text
             size="small"
             @click="router.push({ name: 'events.edit', params: { id: data.id } })"
           />
           <Button
+            v-if="can('events-delete')"
             icon="pi pi-trash"
             text
             severity="danger"
@@ -84,9 +88,14 @@
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue';
 import { useToast } from '@/composables/useToast';
+import { useAbility } from '@casl/vue'
 import Select from 'primevue/select';
 import useEvents from '@/composables/events';
 import { useRouter } from "vue-router";
+
+const { can } = useAbility()
+
+
 
 
 const {

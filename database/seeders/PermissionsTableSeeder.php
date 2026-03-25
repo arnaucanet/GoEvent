@@ -223,10 +223,28 @@ class PermissionsTableSeeder extends Seeder
                 'name' => 'user-list',
                 'guard_name' => 'web',
             ),
-            34 =>
+            34 =>//lista de eventos
             array (
                 'id' => 99,
                 'name' => 'event-list',
+                'guard_name' => 'web',
+            ),
+            35 => //crear
+            array (
+                'id' => 100,
+                'name' => 'events-create',
+                'guard_name' => 'web',
+            ),
+            36 =>//editar
+            array (
+                'id' => 101,
+                'name' => 'events-edit',
+                'guard_name' => 'web',
+            ),
+            37 =>//eliminar
+            array (
+                'id' => 102,
+                'name' => 'events-delete',
                 'guard_name' => 'web',
             ),
         ));
