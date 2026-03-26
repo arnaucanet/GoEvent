@@ -9,6 +9,15 @@ use App\Http\Requests\StorePostRequest;
 
 class CategoryController extends Controller
 {
+    public function getList()
+    {
+        return Category::query()
+            ->select(['id', 'name', 'description', 'icon'])
+            ->where('active', true)
+            ->orderBy('name')
+            ->get();
+    }
+
     public function index()
     {
         $categories = Category::all(); // Show all categories

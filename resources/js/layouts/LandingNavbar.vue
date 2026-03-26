@@ -161,7 +161,9 @@ const { processing, logout } = useAuth();
 const { toggleDarkMode, isDarkTheme, setDefaultMode } = useLayout();
 
 const navLinks = [
-    { label: 'Inicio', route: '/', icon: 'pi pi-home' }
+    { label: 'Inicio', route: '/', icon: 'pi pi-home' },
+    { label: 'Categorias', route: '/#categorias', icon: 'pi pi-th-large' },
+    { label: 'Eventos', route: '/#eventos', icon: 'pi pi-calendar' }
 ];
 
 const items = computed(() => [

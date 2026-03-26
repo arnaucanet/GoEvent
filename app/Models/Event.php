@@ -9,7 +9,14 @@ class Event extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'description', 'start_date', 'end_date', 'capacity', 'featured', 'status', 'user_id', 'category_id'];
+    protected $fillable = ['title', 'description', 'start_date', 'end_date', 'capacity', 'featured', 'status', 'user_id', 'category_id', 'city', 'venue', 'price'];
+
+    protected $casts = [
+        'featured' => 'boolean',
+        'start_date' => 'datetime',
+        'end_date' => 'datetime',
+        'price' => 'decimal:2',
+    ];
 
     public function user()
     {
