@@ -12,6 +12,7 @@
         @click="refreshCategories"
       />
       <Button
+        v-if="can('category-create')"
         label="Nueva Categoría"
         icon="pi pi-plus"
         severity="primary"
@@ -58,12 +59,14 @@
       <Column header="Acciones">
         <template #body="{ data }">
           <Button
+            v-if="can('category-edit')"
             icon="pi pi-pencil"
             text
             size="small"
             @click="openEditDialog(data)"
           />
           <Button
+            v-if="can('category-delete')"
             icon="pi pi-trash"
             text
             severity="danger"
@@ -112,9 +115,13 @@
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue';
 import { useToast } from '@/composables/useToast';
+import { useAbility } from '@casl/vue';
 import Select from 'primevue/select';
 import useCategories from '@/composables/categories';
 import { useRouter } from "vue-router";
+
+const { can } = useAbility()
+
 
 
 const {
@@ -160,11 +167,18 @@ const closeDialog = () => {
 };
 
 const submitForm = async () => {
+  const data = {
+    name: category.value.name,
+    description: category.value.description || null,
+    active: category.value.active
+  };
+
   if (dialogType.value === 'create') {
-    await createCategory({ name: category.value.name, description: category.value.description, active: category.value.active });
+    await createCategory(data);
   } else {
-    await updateCategory(category.value.id, { name: category.value.name, description: category.value.description, active: category.value.active });
+    await updateCategory(category.value.id, data);
   }
+
   await getCategories();
   closeDialog();
 };

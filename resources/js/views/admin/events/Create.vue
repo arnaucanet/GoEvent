@@ -127,7 +127,7 @@
                     <label for="event-status" class="w-32">Status:</label>
                     <Select 
                         v-model="event.status" 
-                        :options="[{label: 'Active', value: 1}, {label: 'Inactive', value: 0}]" 
+                        :options="[{label: 'Borrador', value: 'borrador'}, {label: 'Publicado', value: 'publicado'}, {label: 'Cancelado', value: 'cancelado'}]" 
                         optionLabel="label" 
                         optionValue="value" 
                         placeholder="Select status"
