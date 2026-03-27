@@ -14,6 +14,7 @@ export default function useEvents() {
         start_date: "",
         end_date: "",
         capacity: "",
+        city: "",
         featured: 0,
         status: 1,
         category_id: "",
@@ -56,6 +57,10 @@ export default function useEvents() {
             .number()
             .typeError("Select Category")
             .required("Category is required"),
+        city: yup
+            .string()
+            .nullable()
+            .min(2, "City must be at least 2 characters"),
         status: yup
             .string()
             .oneOf(['borrador', 'publicado', 'cancelado'], 'Status must be borrador, publicado, or cancelado')

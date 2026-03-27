@@ -94,6 +94,24 @@
                 </div>
             </div>
 
+            <!-- CITY -->
+            <div class="mb-3">
+                <div class="flex items-center gap-3">
+                    <label for="event-city" class="w-32">City:</label>
+                    <InputText
+                        v-model="event.city"
+                        id="event-city"
+                        type="text"
+                        size="small"
+                        :invalid="!!errors.city"
+                        class="w-full"
+                    />
+                </div>
+                <div class="text-red-400 mt-1" v-if="errors.city">
+                    {{ errors.city }}
+                </div>
+            </div>
+
             <!-- CATEGORY -->
             <div class="mb-3">
                 <div class="flex items-center gap-3">
