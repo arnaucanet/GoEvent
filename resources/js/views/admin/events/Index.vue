@@ -46,6 +46,8 @@
       </Column>
 
       <Column field="capacity" header="Capacity" sortable></Column>
+
+      <Column field="city" header="City" sortable></Column>
       
 
       <!-- Active -->

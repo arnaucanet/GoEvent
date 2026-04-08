@@ -18,6 +18,7 @@ return new class extends Migration
             $table->timestamp('start_date');
             $table->timestamp('end_date')->nullable();
             $table->integer('capacity');
+            $table->string('city');
             $table->boolean('featured')->default(false);
             $table->enum('status', ['borrador', 'publicado', 'cancelado'])->default('borrador');
 
@@ -36,6 +37,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('events');
+        // Schema::dropIfExists('events');
     }
 };
