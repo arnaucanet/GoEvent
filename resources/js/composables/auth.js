@@ -60,7 +60,11 @@ export default function useAuth() {
                     showConfirmButton: false,
                     timer: 1500
                 })
-                await router.push({ name: 'home' })
+                const hasAdminRole = (auth.user?.roles || []).some(
+                    (role) => role?.name?.toLowerCase().includes('admin')
+                )
+
+                await router.push({ name: hasAdminRole ? 'admin.index' : 'home' })
             })
             .catch(error => {
                 if (error.response?.data) {
