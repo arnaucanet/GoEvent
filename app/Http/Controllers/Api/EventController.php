@@ -66,24 +66,24 @@ class EventController extends Controller
         return response()->json($events);
     }
 
-    public function featured(Request $request)
-    {
-        $limit = (int) $request->query('limit', 8);
-        $limit = max(1, min($limit, 24));
+   public function featured(Request $request)
+{
+    $limit = (int) $request->query('limit', 8);
+    $limit = max(1, min($limit, 24));
 
-        $baseQuery = $this->publicEventsQuery();
+    $baseQuery = $this->publicEventsQuery();
 
-        $events = (clone $baseQuery)
-            ->where('featured', true)
-            ->limit($limit)
-            ->get();
+    $events = (clone $baseQuery)
+        ->where('featured', true)
+        ->limit($limit)
+        ->get();
 
-        if ($events->isEmpty()) {
-            $events = $baseQuery->limit($limit)->get();
-        }
-
-        return response()->json($events);
+    if ($events->isEmpty()) {
+        $events = $baseQuery->limit($limit)->get();
     }
+
+    return response()->json(['data' => $events]);
+}
 
     public function index()
     {

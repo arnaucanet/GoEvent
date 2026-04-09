@@ -14,12 +14,12 @@ use Illuminate\Support\Facades\Route;
 Route::group(['middleware' => 'auth:sanctum'], function() {
 
     Route::apiResource('/categories', CategoryController::class);
-    Route::apiResource('/events', EventController::class);
-    Route::apiResource('/posts', PostController::class);
-
-    Route::get('events/featured', [EventController::class, 'featured']);
+    
     Route::get('events/public', [EventController::class, 'publicList']);
-
+    Route::get('events/featured', [EventController::class, 'featured']);
+    Route::apiResource('/events', EventController::class);
+    
+    Route::apiResource('/posts', PostController::class);
 
     Route::apiResource('users', UserController::class);
     Route::post('users/updateimg', [UserController::class,'updateimg']);
