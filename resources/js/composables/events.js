@@ -63,11 +63,12 @@ export default function useEvents() {
             .min(2, "City must be at least 2 characters"),
         status: yup
             .string()
-            .oneOf(['borrador', 'publicado', 'cancelado'], 'Status must be borrador, publicado, or cancelado')
-            .required('Status is required'),
-        featured: yup
-            .boolean()
-            .required('Featured is required')
+            .oneOf(
+                ["borrador", "publicado", "cancelado"],
+                "Status must be borrador, publicado, or cancelado",
+            )
+            .required("Status is required"),
+        featured: yup.boolean().required("Featured is required"),
     });
 
     const withLoading = async (fn) => {
@@ -90,6 +91,22 @@ export default function useEvents() {
                 eventsList.value = data.map((e) => ({
                     id: e.id,
                     name: e.name,
+                }));
+            } catch (e) {
+                toast.error("Error loading events");
+            }
+        });
+    };
+
+    const getPublicEvents = async () => {
+        return await withLoading(async () => {
+            try {
+                const response = await axios.get("/api/events/public");
+                const data = response.data.data || response.data;
+                events.value = data;
+                eventsList.value = data.map((e) => ({
+                    id: e.id,
+                    name: e.title,
                 }));
             } catch (e) {
                 toast.error("Error loading events");
@@ -167,6 +184,7 @@ export default function useEvents() {
         getError,
         clearErrors,
         getEvents,
+        getPublicEvents,
         getEvent,
         createEvent,
         updateEvent,

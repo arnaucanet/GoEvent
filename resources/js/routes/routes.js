@@ -98,7 +98,14 @@ export default [
                     breadCrumb: 'Perfil',
                 },
             },
-
+            {
+                name: 'events.list',
+                path: 'events',
+                component: () => import('../views/public/events/index.vue'),
+                meta: {
+                    breadCrumb: 'Eventos',
+                },
+            },
         ]
     },
 
