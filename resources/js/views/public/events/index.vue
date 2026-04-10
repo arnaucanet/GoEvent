@@ -46,12 +46,8 @@
             </div>
           </div>
 
-          <!-- Status -->
           <div class="mb-4">
-            <Tag 
-              :value="'Publicado'" 
-              severity="success" 
-            />
+            {{ event.status }}
           </div>
 
           <!-- Button -->
