@@ -55,6 +55,16 @@ export default [
                 name: 'home',
                 component: () => import('../views/public/home/index.vue'),
             },
+            {
+                name: 'events.list',
+                path: 'events',
+                component: () => import('../views/public/events/index.vue'),
+            },
+            {
+                name: 'events.detail',
+                path: 'events/:id',
+                component: () => import('../views/public/events/detail.vue'),
+            },
 
             {
                 path: 'login',
@@ -96,22 +106,6 @@ export default [
                 component: () => import('../views/user/profile.vue'),
                 meta: {
                     breadCrumb: 'Perfil',
-                },
-            },
-            {
-                name: 'events.list',
-                path: 'events',
-                component: () => import('../views/public/events/index.vue'),
-                meta: {
-                    breadCrumb: 'Eventos',
-                },
-            },
-            {
-                name: 'events.detail',
-                path: 'events/:id',
-                component: () => import('../views/public/events/detail.vue'),
-                meta: {
-                    breadCrumb: 'Detalle del Evento',
                 },
             },
         ]
