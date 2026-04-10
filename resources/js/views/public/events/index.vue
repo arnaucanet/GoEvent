@@ -2,7 +2,7 @@
   <div class="events-page p-4">
     <div class="mb-8">
       <h1 class="text-4xl font-bold mb-2">Eventos Disponibles</h1>
-      <p :class="isDarkTheme ? 'text-gray-400' : 'text-gray-600'">Explora todos los eventos disponibles</p>
+      <p class="text-gray-600 dark:text-gray-400">Explora todos los eventos disponibles</p>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
@@ -30,10 +30,7 @@
 
           <!-- Category -->
           <div class="mb-3">
-            <span
-              class="inline-block px-3 py-1 rounded-full text-xs font-medium"
-              :class="isDarkTheme ? 'bg-blue-900 text-blue-200' : 'bg-blue-100 text-blue-800'"
-            >
+            <span class="inline-block bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-full text-xs font-medium">
               {{ event.category?.name }}
             </span>
           </div>
@@ -50,12 +47,8 @@
             </div>
           </div>
 
-          <!-- Status -->
           <div class="mb-4">
-            <Tag 
-              :value="'Publicado'" 
-              severity="success" 
-            />
+            {{ event.status }}
           </div>
 
           <!-- Button -->
@@ -72,22 +65,20 @@
     <!-- Empty State -->
     <div v-if="events.length === 0" class="text-center py-12">
       <i class="pi pi-inbox text-5xl text-gray-400 mb-4"></i>
-      <p class="text-lg" :class="isDarkTheme ? 'text-gray-400' : 'text-gray-600'">No hay eventos disponibles en este momento</p>
+      <p class="text-gray-600 dark:text-gray-400 text-lg">No hay eventos disponibles en este momento</p>
     </div>
   </div>
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import Button from 'primevue/button';
 import Tag from 'primevue/tag';
 import useEvents from '@/composables/events';
-import { useLayout } from '@/composables/layout';
 
 const router = useRouter();
 const { events, getPublicEvents, isLoading } = useEvents();
-const { isDarkTheme, setDefaultMode } = useLayout();
 
 const formatDate = (dateStr) => {
   const date = new Date(dateStr);
@@ -105,7 +96,6 @@ const goToEvent = (id) => {
 };
 
 onMounted(() => {
-  setDefaultMode();
   getPublicEvents();
 });
 </script>

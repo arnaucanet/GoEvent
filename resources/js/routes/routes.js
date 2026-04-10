@@ -106,6 +106,14 @@ export default [
                     breadCrumb: 'Eventos',
                 },
             },
+            {
+                name: 'events.detail',
+                path: 'events/:id',
+                component: () => import('../views/public/events/detail.vue'),
+                meta: {
+                    breadCrumb: 'Detalle del Evento',
+                },
+            },
         ]
     },
 
