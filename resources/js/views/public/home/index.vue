@@ -139,6 +139,7 @@
                             label="Ver Detalles"
                             icon="pi pi-arrow-right"
                             class="w-full mt-auto !bg-blue-600 !border-blue-600 hover:!bg-blue-700"
+                            @click="goToEvent(item.id)"
                         />
                     </div>
                 </article>
@@ -174,11 +175,13 @@
 
 <script setup>
 import { onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
 import { authStore } from "@/store/auth";
 import useFeaturedEvents from "@/composables/featuredEvents";
 import { useLayout } from "@/composables/layout";
 import usePublicEvents from "@/composables/publicEvents";
 
+const router = useRouter();
 const searchText = ref("");
 const selectedCity = ref(null);
 const selectedCategoryId = ref(null);
@@ -252,6 +255,10 @@ const buildSearchParams = () => {
 
 const applySearch = async () => {
     await searchPublicEvents(buildSearchParams());
+};
+
+const goToEvent = (id) => {
+  router.push({ name: 'events.detail', params: { id } });
 };
 
 const selectCategory = async (categoryId) => {
