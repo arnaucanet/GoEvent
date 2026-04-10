@@ -1,5 +1,5 @@
 <template>
-  <div class="events-page p-4">
+  <div class="events-page container mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-14">
     <div class="mb-8">
       <h1 class="text-4xl font-bold mb-2">Eventos Disponibles</h1>
       <p class="text-gray-600 dark:text-gray-400">Explora todos los eventos disponibles</p>
