@@ -70,10 +70,7 @@ export default function usePublicEvents() {
     };
 
     const loadHomeInitialData = async () => {
-        await Promise.all([
-            loadCategories(),
-            loadFeaturedEvents({ limit: 8 }),
-        ]);
+        await loadCategories();
     };
 
     return {

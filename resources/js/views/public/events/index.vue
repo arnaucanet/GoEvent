@@ -5,16 +5,16 @@
       <p :class="isDarkTheme ? 'text-gray-400' : 'text-gray-600'">Explora todos los eventos disponibles</p>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
       <div 
         v-for="event in events" 
         :key="event.id"
-        class="rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
-        :class="isDarkTheme ? 'bg-gray-800' : 'bg-white'"
+        class="h-full flex flex-col rounded-xl border overflow-hidden transition-shadow shadow-sm hover:shadow-md"
+        :class="isDarkTheme ? 'bg-gray-800 border-gray-700' : 'bg-white border-slate-200'"
       >
         <!-- Event Header -->
-        <div class="bg-gradient-to-r from-blue-500 to-blue-600 p-4 text-white">
-          <h2 class="text-xl font-bold mb-2">{{ event.title }}</h2>
+        <div class="bg-blue-600 p-4 text-white min-h-[6rem]">
+          <h2 class="text-2xl font-bold mb-2 line-clamp-2 min-h-[3.5rem]">{{ event.title }}</h2>
           <div class="flex items-center gap-2 text-sm">
             <i class="pi pi-map-marker"></i>
             <span>{{ event.city?.name || '-' }}</span>
@@ -22,9 +22,9 @@
         </div>
 
         <!-- Event Body -->
-        <div class="p-4">
+        <div class="p-4 flex-1 flex flex-col">
           <!-- Description -->
-          <p class="mb-3 line-clamp-2" :class="isDarkTheme ? 'text-gray-400' : 'text-gray-600'">
+          <p class="mb-3 line-clamp-2 min-h-[3.5rem]" :class="isDarkTheme ? 'text-gray-300' : 'text-gray-600'">
             {{ event.description }}
           </p>
 
@@ -39,12 +39,12 @@
           </div>
 
           <!-- Event Details -->
-          <div class="space-y-2 text-sm mb-4">
-            <div class="flex items-center gap-2" :class="isDarkTheme ? 'text-gray-300' : 'text-gray-700'">
+          <div class="space-y-2 text-sm mb-4 min-h-[4.4rem]">
+            <div class="flex items-center gap-2" :class="isDarkTheme ? 'text-gray-200' : 'text-gray-700'">
               <i class="pi pi-calendar"></i>
               <span>{{ formatDate(event.start_date) }}</span>
             </div>
-            <div class="flex items-center gap-2" :class="isDarkTheme ? 'text-gray-300' : 'text-gray-700'">
+            <div class="flex items-center gap-2" :class="isDarkTheme ? 'text-gray-200' : 'text-gray-700'">
               <i class="pi pi-users"></i>
               <span>Capacidad: {{ event.capacity }}</span>
             </div>
@@ -62,8 +62,7 @@
           <Button 
             label="Ver Detalles" 
             icon="pi pi-arrow-right" 
-            class="w-full" 
-            style="background-color: blue;"
+            class="w-full mt-auto !bg-blue-600 !border-blue-600 hover:!bg-blue-700"
             @click="goToEvent(event.id)"
           />
         </div>

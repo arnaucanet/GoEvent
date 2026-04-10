@@ -76,13 +76,13 @@
                 <Button label="Ver todos" text @click="resetFilters" />
             </div>
 
-            <div v-if="isLoadingFeatured || isLoadingEvents" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-5">
+            <div v-if="isLoadingFeatured" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <article
-                    v-for="n in 4"
+                    v-for="n in 3"
                     :key="`skeleton-${n}`"
-                    class="rounded-2xl overflow-hidden border border-surface-200 dark:border-surface-700 bg-surface-0 dark:bg-surface-900 animate-pulse"
+                    class="rounded-lg overflow-hidden border border-surface-200 dark:border-surface-700 bg-surface-0 dark:bg-surface-900 animate-pulse"
                 >
-                    <div class="h-44 sm:h-48 bg-surface-200 dark:bg-surface-700"></div>
+                    <div class="h-24 bg-surface-200 dark:bg-surface-700"></div>
                     <div class="p-4 sm:p-5 space-y-2">
                         <div class="h-3 w-1/2 bg-surface-200 dark:bg-surface-700 rounded"></div>
                         <div class="h-4 w-4/5 bg-surface-200 dark:bg-surface-700 rounded"></div>
@@ -91,32 +91,62 @@
                 </article>
             </div>
 
-            <div v-else-if="filteredEvents.length" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-5">
+            <div v-else-if="featuredCards.length" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
                 <article
-                    v-for="item in filteredEvents"
+                    v-for="item in featuredCards"
                     :key="item.id"
-                    class="group rounded-2xl overflow-hidden border border-surface-200 dark:border-surface-700 bg-surface-0 dark:bg-surface-900 shadow-sm hover:shadow-xl transition-shadow"
+                    class="h-full flex flex-col rounded-xl border overflow-hidden transition-shadow shadow-sm hover:shadow-md"
+                    :class="isDarkTheme ? 'bg-gray-800 border-gray-700' : 'bg-white border-slate-200'"
                 >
-                    <div class="h-44 sm:h-48 relative" :class="item.cover">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                        <Tag :value="item.type" severity="info" class="absolute top-3 left-3" />
-                        <p class="absolute bottom-3 left-3 text-white font-semibold">{{ item.city }}</p>
-                    </div>
-                    <div class="p-4 sm:p-5">
-                        <p class="text-xs uppercase tracking-wider text-surface-500 dark:text-surface-400 mb-2">{{ item.date }}</p>
-                        <h3 class="font-extrabold text-lg leading-tight mb-2">{{ item.title }}</h3>
-                        <p class="text-sm text-surface-600 dark:text-surface-300 mb-4">{{ item.venue }}</p>
-                        <div class="flex items-center justify-between">
-                            <p class="font-bold text-blue-700 dark:text-blue-300">{{ item.priceLabel }}</p>
-                            <Button label="Entradas" size="small" rounded />
+                    <div class="bg-blue-600 p-4 text-white min-h-[6rem]">
+                        <h3 class="text-2xl font-bold mb-2 line-clamp-2 min-h-[3.5rem]">{{ item.title }}</h3>
+                        <div class="flex items-center gap-2 text-sm">
+                            <i class="pi pi-map-marker"></i>
+                            <span>{{ item.city }}</span>
                         </div>
+                    </div>
+
+                    <div class="p-4 flex-1 flex flex-col">
+                        <p class="mb-3 line-clamp-2 min-h-[3.5rem]" :class="isDarkTheme ? 'text-gray-300' : 'text-gray-600'">
+                            {{ item.description }}
+                        </p>
+
+                        <div class="mb-3">
+                            <span
+                                class="inline-block px-3 py-1 rounded-full text-xs font-medium"
+                                :class="isDarkTheme ? 'bg-blue-900 text-blue-200' : 'bg-blue-100 text-blue-800'"
+                            >
+                                {{ item.categoryName }}
+                            </span>
+                        </div>
+
+                        <div class="space-y-2 text-sm mb-4 min-h-[4.4rem]" :class="isDarkTheme ? 'text-gray-200' : 'text-gray-700'">
+                            <div class="flex items-center gap-2">
+                                <i class="pi pi-calendar"></i>
+                                <span>{{ item.startDateLabel }}</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <i class="pi pi-users"></i>
+                                <span>Capacidad: {{ item.capacity }}</span>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <Tag :value="item.statusLabel" severity="success" />
+                        </div>
+
+                        <Button
+                            label="Ver Detalles"
+                            icon="pi pi-arrow-right"
+                            class="w-full mt-auto !bg-blue-600 !border-blue-600 hover:!bg-blue-700"
+                        />
                     </div>
                 </article>
             </div>
 
             <div v-else class="rounded-2xl border border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-900/40 p-8 text-center">
                 <p class="font-semibold text-lg mb-2">No hay eventos destacados disponibles</p>
-                <p class="text-surface-600 dark:text-surface-300">{{ eventsError || featuredError || 'Prueba más tarde o revisa los filtros seleccionados.' }}</p>
+                <p class="text-surface-600 dark:text-surface-300">{{ featuredError || 'Prueba más tarde.' }}</p>
             </div>
         </section>
 
@@ -143,25 +173,33 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from "vue";
+import { onMounted, ref } from "vue";
 import { authStore } from "@/store/auth";
+import useFeaturedEvents from "@/composables/featuredEvents";
+import { useLayout } from "@/composables/layout";
 import usePublicEvents from "@/composables/publicEvents";
 
 const searchText = ref("");
 const selectedCity = ref(null);
 const selectedCategoryId = ref(null);
 const activeQuickFilter = ref("all");
+
 const {
-    visibleEvents,
     categories,
     cityOptions,
-    isLoadingFeatured,
     isLoadingEvents,
-    featuredError,
-    eventsError,
     loadHomeInitialData,
     searchPublicEvents,
 } = usePublicEvents();
+
+const {
+    featuredCards,
+    isLoadingFeatured,
+    featuredError,
+    loadFeaturedEvents,
+} = useFeaturedEvents();
+
+const { isDarkTheme, setDefaultMode } = useLayout();
 
 const quickFilters = [
     { label: "Todos", value: "all" },
@@ -177,37 +215,6 @@ const categoryIcons = [
     "pi pi-face-smile",
     "pi pi-heart",
 ];
-
-const fallbackCovers = [
-    "bg-gradient-to-br from-blue-700 to-cyan-400",
-    "bg-gradient-to-br from-emerald-700 to-lime-400",
-    "bg-gradient-to-br from-fuchsia-700 to-orange-400",
-    "bg-gradient-to-br from-violet-700 to-sky-400",
-];
-
-const formatDate = (value) => {
-    if (!value) return "Fecha por confirmar";
-    return new Date(value).toLocaleDateString("es-ES", {
-        weekday: "short",
-        day: "2-digit",
-        month: "short",
-    });
-};
-
-const mapEventToCard = (item, index) => ({
-    id: item.id,
-    title: item.title,
-    city: item.city || "Ciudad por confirmar",
-    date: formatDate(item.start_date),
-    venue: item.venue || item.category?.name || "Recinto por confirmar",
-    priceLabel: item.price ? `Desde ${item.price} EUR` : "Entradas disponibles",
-    type: item.category?.name || "Evento",
-    cover: fallbackCovers[index % fallbackCovers.length],
-});
-
-const filteredEvents = computed(() => {
-    return visibleEvents.value.map(mapEventToCard);
-});
 
 const buildSearchParams = () => {
     const params = {
@@ -263,6 +270,7 @@ const resetFilters = async () => {
     selectedCategoryId.value = null;
     activeQuickFilter.value = "all";
     await searchPublicEvents({ limit: 12 });
+    await loadFeaturedEvents(3);
 };
 
 const resolveCategoryIcon = (category, indexSeed = 0) => {
@@ -270,8 +278,12 @@ const resolveCategoryIcon = (category, indexSeed = 0) => {
     return categoryIcons[indexSeed % categoryIcons.length];
 };
 
-onMounted(() => {
-    loadHomeInitialData();
+onMounted(async () => {
+    setDefaultMode();
+    await Promise.all([
+        loadHomeInitialData(),
+        loadFeaturedEvents(3),
+    ]);
 });
 </script>
 
