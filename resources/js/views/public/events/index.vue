@@ -68,6 +68,7 @@
       <p class="text-gray-600 dark:text-gray-400 text-lg">No hay eventos disponibles en este momento</p>
     </div>
   </div>
+  <AppFooter></AppFooter>
 </template>
 
 <script setup>
@@ -76,6 +77,7 @@ import { useRouter } from 'vue-router';
 import Button from 'primevue/button';
 import Tag from 'primevue/tag';
 import useEvents from '@/composables/events';
+import AppFooter from '../../../components/AppFooter.vue';
 
 const router = useRouter();
 const { events, getPublicEvents, isLoading } = useEvents();

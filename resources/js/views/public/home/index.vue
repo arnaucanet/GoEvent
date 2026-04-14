@@ -171,6 +171,9 @@
             </div>
         </section>
     </div>
+
+    <!-- Global Footer -->
+    <AppFooter />
 </template>
 
 <script setup>
@@ -180,6 +183,7 @@ import { authStore } from "@/store/auth";
 import useFeaturedEvents from "@/composables/featuredEvents";
 import { useLayout } from "@/composables/layout";
 import usePublicEvents from "@/composables/publicEvents";
+import AppFooter from "@/components/AppFooter.vue";
 
 const router = useRouter();
 const searchText = ref("");

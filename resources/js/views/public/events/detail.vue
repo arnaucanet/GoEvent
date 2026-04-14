@@ -141,17 +141,19 @@
 
             <!-- Action Button -->
             <Button 
+              label="Comprar Entradas" 
+              icon="pi pi-shopping-cart"
+              class="w-full mb-3 !bg-blue-600 !border-blue-600 hover:!bg-blue-700"
+              severity="primary"
+              @click="goToCompras"
+            />
+            
+            <Button 
               label="Registrarse al Evento" 
               icon="pi pi-user-plus"
               class="w-full mb-3 !bg-blue-600 !border-blue-600 hover:!bg-blue-700"
               severity="primary"
               @click="registerEvent"
-            />
-            <Button 
-            label="🪑 Ir al mapa de asientos" 
-            class="w-full mb-3 !bg-blue-600 !border-blue-600 hover:!bg-blue-700"
-            severity="primary"
-            @click="registerEvent"
             />
             
             <!-- Secondary Button -->
@@ -195,6 +197,9 @@
       />
     </div>
   </div>
+
+  <!-- Global Footer -->
+  <AppFooter />
 </template>
 
 <script setup>
@@ -202,6 +207,7 @@ import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import Button from 'primevue/button';
 import Tag from 'primevue/tag';
+import AppFooter from '@/components/AppFooter.vue';
 import useEvents from '@/composables/events';
 
 const router = useRouter();
@@ -236,6 +242,10 @@ const formatDateTime = (dateStr) => {
 
 const registerEvent = () => {
   console.log('Registrando al evento:', event.value.id);
+};
+
+const goToCompras = () => {
+  router.push({ name: 'events.compras', params: { id: event.value.id } });
 };
 
 const shareEvent = () => {
