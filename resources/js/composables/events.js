@@ -98,10 +98,10 @@ export default function useEvents() {
         });
     };
 
-    const getPublicEvents = async () => {
+    const getPublicEvents = async (params = {}) => {
         return await withLoading(async () => {
             try {
-                const response = await axios.get("/api/events/public");
+                const response = await axios.get("/api/events/public", { params });
                 const data = response.data.data || response.data;
                 events.value = data;
                 eventsList.value = data.map((e) => ({
@@ -110,6 +110,17 @@ export default function useEvents() {
                 }));
             } catch (e) {
                 toast.error("Error loading events");
+            }
+        });
+    };
+
+    const getPublicEvent = async (id) => {
+        return await withLoading(async () => {
+            try {
+                const response = await axios.get(`/api/events/public/${id}`);
+                event.value = response.data.data || response.data;
+            } catch (e) {
+                toast.error("Event not found");
             }
         });
     };
@@ -185,6 +196,7 @@ export default function useEvents() {
         clearErrors,
         getEvents,
         getPublicEvents,
+        getPublicEvent,
         getEvent,
         createEvent,
         updateEvent,

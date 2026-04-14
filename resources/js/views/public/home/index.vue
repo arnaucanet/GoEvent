@@ -258,7 +258,10 @@ const buildSearchParams = () => {
 };
 
 const applySearch = async () => {
-    await searchPublicEvents(buildSearchParams());
+    await router.push({
+        name: "events.list",
+        query: buildSearchParams(),
+    });
 };
 
 const goToEvent = (id) => {

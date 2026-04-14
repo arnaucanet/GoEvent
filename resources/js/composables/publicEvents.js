@@ -5,20 +5,28 @@ export default function usePublicEvents() {
     const featuredEvents = ref([]);
     const visibleEvents = ref([]);
     const categories = ref([]);
+    const cities = ref([]);
     const isLoadingFeatured = ref(false);
     const isLoadingEvents = ref(false);
     const featuredError = ref("");
     const eventsError = ref("");
 
     const cityOptions = computed(() => {
+        if (cities.value.length) {
+            return cities.value.map((city) => ({
+                label: city.name,
+                value: city.name,
+            }));
+        }
+
         const source = visibleEvents.value.length ? visibleEvents.value : featuredEvents.value;
-        const cities = source
+        const uniqueCities = source
             .map((item) => item.city)
             .filter((value) => !!value)
             .filter((value, index, array) => array.indexOf(value) === index)
             .sort((a, b) => a.localeCompare(b));
 
-        return cities.map((city) => ({
+        return uniqueCities.map((city) => ({
             label: city,
             value: city,
         }));
@@ -30,6 +38,15 @@ export default function usePublicEvents() {
             categories.value = response.data?.data || response.data || [];
         } catch (error) {
             categories.value = [];
+        }
+    };
+
+    const loadCities = async () => {
+        try {
+            const response = await axios.get("/api/cities/list");
+            cities.value = response.data?.data || response.data || [];
+        } catch (error) {
+            cities.value = [];
         }
     };
 
@@ -70,13 +87,17 @@ export default function usePublicEvents() {
     };
 
     const loadHomeInitialData = async () => {
-        await loadCategories();
+        await Promise.all([
+            loadCategories(),
+            loadCities(),
+        ]);
     };
 
     return {
         featuredEvents,
         visibleEvents,
         categories,
+        cities,
         cityOptions,
         isLoadingFeatured,
         isLoadingEvents,
@@ -84,6 +105,7 @@ export default function usePublicEvents() {
         eventsError,
         loadHomeInitialData,
         loadCategories,
+        loadCities,
         loadFeaturedEvents,
         searchPublicEvents,
     };

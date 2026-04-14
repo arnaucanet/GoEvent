@@ -66,24 +66,33 @@ class EventController extends Controller
         return response()->json($events);
     }
 
-   public function featured(Request $request)
-{
-    $limit = (int) $request->query('limit', 8);
-    $limit = max(1, min($limit, 24));
+    public function publicShow(int $id)
+    {
+        $event = $this->publicEventsQuery()
+            ->whereKey($id)
+            ->firstOrFail();
 
-    $baseQuery = $this->publicEventsQuery();
-
-    $events = (clone $baseQuery)
-        ->where('featured', true)
-        ->limit($limit)
-        ->get();
-
-    if ($events->isEmpty()) {
-        $events = $baseQuery->limit($limit)->get();
+        return response()->json($event);
     }
 
-    return response()->json(['data' => $events]);
-}
+    public function featured(Request $request)
+    {
+        $limit = (int) $request->query('limit', 8);
+        $limit = max(1, min($limit, 24));
+
+        $baseQuery = $this->publicEventsQuery();
+
+        $events = (clone $baseQuery)
+            ->where('featured', true)
+            ->limit($limit)
+            ->get();
+
+        if ($events->isEmpty()) {
+            $events = $baseQuery->limit($limit)->get();
+        }
+
+        return response()->json(['data' => $events]);
+    }
 
     public function index()
     {
@@ -114,7 +123,6 @@ class EventController extends Controller
             'end_date' => ['nullable', 'date', 'after:start_date'],
             'capacity' => ['required', 'integer', 'min:1'],
             'price' => ['nullable', 'numeric', 'min:0'],
-            'city' => ['nullable', 'string', 'max:255'],
             'featured' => ['boolean'],
             'status' => ['in:borrador,publicado,cancelado'],
             'category_id' => ['required', 'exists:categories,id'],
@@ -139,7 +147,6 @@ class EventController extends Controller
             'start_date' => ['sometimes', 'required', 'date'],
             'end_date' => ['sometimes', 'nullable', 'date', 'after:start_date'],
             'capacity' => ['sometimes', 'required', 'integer', 'min:1'],
-            'city' => ['sometimes', 'nullable', 'string', 'max:255'],
             'price' => ['sometimes', 'nullable', 'numeric', 'min:0'],
             'featured' => ['sometimes', 'boolean'],
             'status' => ['sometimes', 'in:borrador,publicado,cancelado'],

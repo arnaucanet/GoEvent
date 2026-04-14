@@ -5,7 +5,11 @@
       <p class="text-gray-600 dark:text-gray-400">Explora todos los eventos disponibles</p>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
+    <div v-if="isLoading" class="flex items-center justify-center py-10">
+      <i class="pi pi-spin pi-spinner text-3xl text-blue-500"></i>
+    </div>
+
+    <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
       <div 
         v-for="event in events" 
         :key="event.id"
@@ -17,7 +21,7 @@
           <h2 class="text-2xl font-bold mb-2 line-clamp-2 min-h-[3.5rem]">{{ event.title }}</h2>
           <div class="flex items-center gap-2 text-sm">
             <i class="pi pi-map-marker"></i>
-            <span>{{ event.city?.name || '-' }}</span>
+            <span>{{ event.city || '-' }}</span>
           </div>
         </div>
 
@@ -63,7 +67,7 @@
     </div>
 
     <!-- Empty State -->
-    <div v-if="events.length === 0" class="text-center py-12">
+    <div v-if="!isLoading && events.length === 0" class="text-center py-12">
       <i class="pi pi-inbox text-5xl text-gray-400 mb-4"></i>
       <p class="text-gray-600 dark:text-gray-400 text-lg">No hay eventos disponibles en este momento</p>
     </div>
@@ -72,15 +76,32 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+import { onMounted, watch } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 import Button from 'primevue/button';
-import Tag from 'primevue/tag';
 import useEvents from '@/composables/events';
 import AppFooter from '../../../components/AppFooter.vue';
 
 const router = useRouter();
+const route = useRoute();
 const { events, getPublicEvents, isLoading } = useEvents();
+
+const buildQueryParams = () => {
+  const params = {};
+
+  if (route.query.q) params.q = route.query.q;
+  if (route.query.city) params.city = route.query.city;
+  if (route.query.category_id) params.category_id = route.query.category_id;
+  if (route.query.date_from) params.date_from = route.query.date_from;
+  if (route.query.date_to) params.date_to = route.query.date_to;
+  if (route.query.limit) params.limit = route.query.limit;
+
+  return params;
+};
+
+const loadEvents = async () => {
+  await getPublicEvents(buildQueryParams());
+};
 
 const formatDate = (dateStr) => {
   const date = new Date(dateStr);
@@ -98,6 +119,14 @@ const goToEvent = (id) => {
 };
 
 onMounted(() => {
-  getPublicEvents();
+  loadEvents();
 });
+
+watch(
+  () => route.query,
+  () => {
+    loadEvents();
+  },
+  { deep: true }
+);
 </script>

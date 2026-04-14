@@ -7,16 +7,23 @@ use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\EventController;
+use App\Http\Controllers\Api\CityController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 
+
+
 Route::group(['middleware' => 'auth:sanctum'], function() {
 
-    Route::apiResource('/categories', CategoryController::class);
-    
     Route::get('events/public', [EventController::class, 'publicList']);
+    Route::get('events/public/{id}', [EventController::class, 'publicShow']);
     Route::get('events/featured', [EventController::class, 'featured']);
+    Route::get('cities/list', [CityController::class, 'getList']);
+    Route::get('category-list', [CategoryController::class, 'getList']);
+
+    Route::apiResource('/categories', CategoryController::class);
+
     Route::apiResource('/events', EventController::class);
     
     Route::apiResource('/posts', PostController::class);
@@ -47,7 +54,5 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
             ->toArray();
     });
 });
-
-Route::get('category-list', [CategoryController::class, 'getList']);
 
 

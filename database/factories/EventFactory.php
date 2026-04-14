@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\Event;
 use App\Models\User;
 use App\Models\Category;
+use App\Models\City;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Event>
@@ -65,13 +66,17 @@ class EventFactory extends Factory
         $event = $this->faker->randomElement($events);
         $startDate = $this->faker->dateTimeBetween('now', '+1 month');
         $endDate = (clone $startDate)->modify('+' . $this->faker->numberBetween(1, 48) . ' hours');
+        $cityName = City::inRandomOrder()->value('name') ?? $this->faker->city();
 
         return [
             'title' => $event['title'],
             'description' => $event['description'],
+            'city' => $cityName,
+            'venue' => $this->faker->company() . ' Arena',
             'start_date' => $startDate,
             'end_date' => $endDate,
             'capacity' => $this->faker->numberBetween(20, 200),
+            'price' => $this->faker->randomFloat(2, 0, 120),
             'featured' => $this->faker->boolean(20),
             'status' => 'publicado',
             'user_id' => User::inRandomOrder()->first()->id,

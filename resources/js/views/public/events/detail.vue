@@ -44,7 +44,7 @@
         <div class="lg:col-span-2">
           <!-- Description -->
           <div class="bg-white rounded-lg p-6 mb-6 shadow-lg border border-slate-200">
-            <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
+            <h2 class="text-2xl font-bold mb-4 text-gray-900">
               <i class="pi pi-book mr-2 text-blue-500"></i>Descripción
             </h2>
             <p class="text-base leading-7 text-slate-600">
@@ -61,7 +61,7 @@
                   <i class="pi pi-calendar text-xl text-blue-600 dark:text-blue-300"></i>
                 </div>
                 <div>
-                  <h3 class="font-semibold text-gray-900 dark:text-white mb-1">Fecha de Inicio</h3>
+                  <h3 class="font-semibold text-gray-900 mb-1">Fecha de Inicio</h3>
                   <p class="text-slate-600">{{ formatDate(event.start_date) }}</p>
                 </div>
               </div>
@@ -74,7 +74,7 @@
                   <i class="pi pi-calendar text-xl text-green-600 dark:text-green-300"></i>
                 </div>
                 <div>
-                  <h3 class="font-semibold text-gray-900 dark:text-white mb-1">Fecha de Término</h3>
+                  <h3 class="font-semibold text-gray-900 mb-1">Fecha de Término</h3>
                   <p class="text-slate-600">{{ formatDate(event.end_date) }}</p>
                 </div>
               </div>
@@ -87,7 +87,7 @@
                   <i class="pi pi-users text-xl text-purple-600 dark:text-purple-300"></i>
                 </div>
                 <div>
-                  <h3 class="font-semibold text-gray-900 dark:text-white mb-1">Capacidad</h3>
+                  <h3 class="font-semibold text-gray-900 mb-1">Capacidad</h3>
                   <p class="text-slate-600">{{ event.capacity || 0 }} personas</p>
                 </div>
               </div>
@@ -100,7 +100,7 @@
                   <i class="pi pi-map-marker text-xl text-orange-600 dark:text-orange-300"></i>
                 </div>
                 <div>
-                  <h3 class="font-semibold text-gray-900 dark:text-white mb-1">Ubicación</h3>
+                  <h3 class="font-semibold text-gray-900 mb-1">Ubicación</h3>
                   <p class="text-slate-600">{{ event.city || 'No especificada' }}</p>
                 </div>
               </div>
@@ -112,7 +112,7 @@
         <div class="lg:col-span-1">
           <!-- Event Card Summary -->
           <div class="bg-white rounded-lg p-6 shadow-lg border border-slate-200 sticky top-24 h-fit">
-            <h3 class="text-xl font-bold mb-6 text-gray-900 dark:text-white">Resumen del Evento</h3>
+            <h3 class="text-xl font-bold mb-6 text-gray-900">Resumen del Evento</h3>
 
             <!-- Category Badge -->
             <div class="mb-6">
@@ -172,11 +172,11 @@
                 <i class="pi pi-info-circle mr-1"></i>
                 Evento desde
               </p>
-              <p class="text-sm text-slate-700 font-mono">
+              <p class="text-sm text-slate-900 font-monospace">
                 {{ formatDateTime(event.start_date) }}
               </p>
               <p class="text-xs text-slate-500 mt-3 mb-2">hasta</p>
-              <p class="text-sm text-slate-700 font-mono">
+              <p class="text-sm text-slate-900 font-monospace">
                 {{ formatDateTime(event.end_date) }}
               </p>
             </div>
@@ -212,7 +212,7 @@ import useEvents from '@/composables/events';
 
 const router = useRouter();
 const route = useRoute();
-const { event, isLoading, getEvent } = useEvents();
+const { event, isLoading, getPublicEvent } = useEvents();
 
 const goBack = () => {
   router.push({ name: 'events.list' });
@@ -267,7 +267,7 @@ const shareEvent = () => {
 onMounted(() => {
   const eventId = route.params.id;
   if (eventId) {
-    getEvent(eventId);
+    getPublicEvent(eventId);
   }
 });
 </script>

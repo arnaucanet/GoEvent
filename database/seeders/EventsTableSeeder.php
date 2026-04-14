@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 use App\Models\Event;
 
 class EventsTableSeeder extends Seeder
@@ -15,15 +14,16 @@ class EventsTableSeeder extends Seeder
      */
     public function run()
     {
-        // Check if there are existing users and categories
         if (\App\Models\User::count() > 0 && \App\Models\Category::count() > 0) {
-            
-            // Create 10 dummy events
             Event::factory()->count(10)->create();
-            
+
+            if ($this->command) {
+                $this->command->info('10 events seeded successfully.');
+            }
         } else {
-            // Log that events could not be seeded because of missing dependencies
-            $this->command->info('Events could not be seeded. Ensure Users and Categories exist.');
+            if ($this->command) {
+                $this->command->warn('Events could not be seeded. Ensure Users and Categories exist.');
+            }
         }
     }
 }
