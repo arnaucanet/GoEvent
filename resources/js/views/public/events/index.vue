@@ -28,16 +28,11 @@
 
         <!-- Event Body -->
         <div class="p-4 flex-1 flex flex-col">
-          
-          
+
           <!-- Description -->
           <p class="mb-3 line-clamp-2 min-h-[3.5rem]" :class="isDarkTheme ? 'text-gray-300' : 'text-gray-600'">
             {{ event.description }}
-            
           </p>
-          
-
-          
 
           <!-- Category -->
           <div class="mb-3">
@@ -57,24 +52,31 @@
               <span>Capacidad: {{ event.capacity }}</span>
             </div>
           </div>
-          
 
-          <div class="flex items-center gap-2">
-                <div class="w-3 h-3 bg-green-500 rounded-full"></div>
-                <span class="text-slate-900 font-medium">{{ event.status || 'publicado' }}</span>
+          <div class="mt-auto pt-2 border-t" :class="isDarkTheme ? 'border-slate-700' : 'border-slate-200'">
+              <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                      <div class="w-2.5 h-2.5 rounded-full"
+                          :class="(event.status || 'publicado').toLowerCase() === 'publicado' ? 'bg-emerald-500' : 'bg-amber-500'">
+                      </div>
+                      <span class="text-xs font-semibold uppercase tracking-wide"
+                          :class="isDarkTheme ? 'text-slate-300' : 'text-slate-600'">
+                          {{ event.status || 'publicado' }}
+                      </span>
+                  </div>
               </div>
+          </div>
 
           <div v-if="event.featured">
               <i class="pi pi-star-fill text-yellow-500"></i>
               <span class="text-black-800 font-semibold"> Evento Destacado</span>
           </div>
-          
 
           <!-- Button -->
           <Button 
             label="Ver Detalles" 
             icon="pi pi-arrow-right" 
-            class="w-full mt-auto !bg-blue-600 !border-blue-600 hover:!bg-blue-700"
+            class="w-full mt-4 !bg-blue-600 !border-blue-600 hover:!bg-blue-700"
             @click="goToEvent(event.id)"
           />
         </div>

@@ -4,7 +4,7 @@
             <div class="hero-bg absolute inset-0"></div>
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-24 relative">
                 <div class="max-w-4xl">
-                    <p class="uppercase tracking-[0.2em] text-xs sm:text-sm text-white/80 mb-4">Plataforma de eventos</p>
+                    <p class="uppercase tracking-[0.2em] text-xs sm:text-sm text-white/80 mb-4 reveal-1">Plataforma de eventos</p>
                     <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black leading-tight text-white mb-5 reveal-1">
                         Descubre experiencias
                         <span class="block text-sky-300">en directo cerca de ti</span>
@@ -14,8 +14,8 @@
                     </p>
 
                     <div
-                        class="reveal-3 rounded-2xl p-3 sm:p-4 shadow-2xl max-w-3xl"
-                        :class="isDarkTheme ? 'bg-gray-900' : 'bg-white'"
+                        class="reveal-3 rounded-2xl p-3 sm:p-4 max-w-3xl border backdrop-blur-sm"
+                        :class="isDarkTheme ? 'bg-gray-900/85 border-gray-700' : 'bg-white/95 border-white/70'"
                     >
                         <div class="grid grid-cols-1 md:grid-cols-12 gap-2 sm:gap-3">
                             <div class="md:col-span-6">
@@ -50,7 +50,7 @@
                             :value="chip.label"
                             :severity="activeQuickFilter === chip.value ? 'info' : 'contrast'"
                             @click="applyQuickFilter(chip.value)"
-                            class="cursor-pointer"
+                            class="cursor-pointer transition-transform hover:-translate-y-0.1"
                         />
                     </div>
                 </div>
@@ -65,11 +65,15 @@
                 <button
                     v-for="cat in categories"
                     :key="cat.id"
-                    class="rounded-xl p-4 text-left border border-surface-200 dark:border-surface-700 bg-surface-0 dark:bg-surface-900 hover:-translate-y-0.5 transition-transform"
+                    class="rounded-2xl p-4 text-left border transition-all duration-200 hover:-translate-y-1 hover:shadow-lg"
+                    :class="isDarkTheme ? 'border-slate-700 bg-slate-800/70 hover:border-blue-700' : 'border-slate-200 bg-white hover:border-blue-200'"
                     @click="selectCategory(cat.id)"
                 >
-                    <i :class="resolveCategoryIcon(cat, cat.id)" class="text-lg mb-3 text-blue-600"></i>
-                    <p class="font-semibold text-sm sm:text-base">{{ cat.name }}</p>
+                    <div class="w-9 h-9 rounded-lg mb-3 flex items-center justify-center"
+                        :class="isDarkTheme ? 'bg-blue-900/40' : 'bg-blue-50'">
+                        <i :class="resolveCategoryIcon(cat, cat.id)" class="text-lg text-blue-600"></i>
+                    </div>
+                    <p class="font-semibold text-sm sm:text-base" :class="isDarkTheme ? 'text-slate-100' : 'text-slate-900'">{{ cat.name }}</p>
                 </button>
             </div>
         </section>
@@ -105,11 +109,11 @@
                 <article
                     v-for="item in featuredCards"
                     :key="item.id"
-                    class="h-full flex flex-col rounded-xl border overflow-hidden transition-shadow shadow-sm hover:shadow-md"
-                    :class="isDarkTheme ? 'bg-gray-800 border-gray-700' : 'bg-white border-slate-200'"
+                    class="h-full flex flex-col rounded-2xl border overflow-hidden transition-all duration-300 shadow-sm hover:-translate-y-0.5 hover:shadow-xl"
+                    :class="isDarkTheme ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'"
                 >
-                    <div class="bg-blue-600 p-4 text-white min-h-[6rem]">
-                        <h3 class="text-2xl font-bold mb-2 line-clamp-2 min-h-[3.5rem]">{{ item.title }}</h3>
+                    <div class="bg-gradient-to-r from-blue-700 to-blue-500 p-4 text-white">
+                        <h3 class="text-2xl font-bold mb-2 line-clamp-2 tracking-tight">{{ item.title }}</h3>
                         <div class="flex items-center gap-2 text-sm">
                             <i class="pi pi-map-marker"></i>
                             <span>{{ item.city }}</span>
@@ -117,7 +121,7 @@
                     </div>
 
                     <div class="p-4 flex-1 flex flex-col">
-                        <p class="mb-3 line-clamp-2 min-h-[3.5rem]" :class="isDarkTheme ? 'text-gray-300' : 'text-gray-600'">
+                        <p class="mb-3 line-clamp-2 leading-relaxed" :class="isDarkTheme ? 'text-slate-300' : 'text-slate-600'">
                             {{ item.description }}
                         </p>
 
@@ -130,7 +134,7 @@
                             </span>
                         </div>
 
-                        <div class="space-y-2 text-sm mb-4 min-h-[4.4rem]" :class="isDarkTheme ? 'text-gray-200' : 'text-gray-700'">
+                        <div class="space-y-2 text-sm mb-4" :class="isDarkTheme ? 'text-slate-200' : 'text-slate-700'">
                             <div class="flex items-center gap-2">
                                 <i class="pi pi-calendar"></i>
                                 <span>{{ item.startDateLabel }}</span>
@@ -140,17 +144,24 @@
                                 <span>Capacidad: {{ item.capacity }}</span>
                             </div>
                         </div>
-                    </div>
+                        <div class="mt-auto pt-2 border-t" :class="isDarkTheme ? 'border-slate-700' : 'border-slate-200'">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-2.5 h-2.5 rounded-full"
+                                        :class="(item.status || 'publicado').toLowerCase() === 'publicado' ? 'bg-emerald-500' : 'bg-amber-500'">
+                                    </div>
+                                    <span class="text-xs font-semibold uppercase tracking-wide"
+                                        :class="isDarkTheme ? 'text-slate-300' : 'text-slate-600'">
+                                        {{ item.status || 'publicado' }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
 
-                <div class="flex items-center gap-2">
-                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
-                    <span class="text-black">{{ item.status || 'publicado' }}</span>
-                </div>
-                    <div>
                         <Button
                             label="Ver Detalles"
                             icon="pi pi-arrow-right"
-                            class="w-full mt-auto !bg-blue-600 !border-blue-600 hover:!bg-blue-700"
+                            class="w-full mt-4 !bg-blue-600 !border-blue-600 hover:!bg-blue-700"
                             @click="goToEvent(item.id)"
                         />
                     </div>
