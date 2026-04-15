@@ -23,17 +23,20 @@
           <div class="flex items-center gap-2">
             <i class="pi pi-map-marker"></i>
             <span>{{ event.city || '-' }}</span>
+            
           </div>
           <div class="flex items-center gap-2">
             <i class="pi pi-tag"></i>
             <span>{{ event.category?.name || 'General' }}</span>
           </div>
-          <div>
-            <Tag 
-              :value="'Publicado'" 
-              severity="success"
-              class="text-sm"
-            />
+          <div class="flex items-center gap-2">
+                <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                <span class="text-white">{{ event.status || 'publicado' }}</span>
+              </div>
+
+          <div v-if="event.featured">
+              <i class="pi pi-star-fill text-yellow-500"></i>
+              <span class="text-black-800 font-semibold"> Evento Destacado</span>
           </div>
         </div>
       </div>
@@ -126,18 +129,16 @@
             <div class="mb-6 pb-6 border-b border-slate-200">
               <p class="text-sm text-slate-500 font-semibold mb-2">ESTADO</p>
               <div class="flex items-center gap-2">
-                <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                <div class="w-3 h-3 bg-green-500 rounded-full"></div>
                 <span class="text-slate-900 font-medium">{{ event.status || 'publicado' }}</span>
               </div>
             </div>
 
             <!-- Featured Badge -->
-            <div v-if="event.featured" class="mb-6 pb-6 border-b border-slate-200">
-              <div class="flex items-center gap-2 bg-yellow-50 rounded-lg p-3">
-                <i class="pi pi-star-fill text-yellow-500 text-lg"></i>
-                <span class="text-yellow-800 font-semibold">Evento Destacado</span>
-              </div>
-            </div>
+           <div v-if="event.featured">
+              <i class="pi pi-star-fill text-yellow-500"></i>
+              <span class="text-black-800 font-semibold"> Evento Destacado</span>
+          </div><br>
 
             <!-- Action Button -->
             <Button 

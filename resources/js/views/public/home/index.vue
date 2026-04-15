@@ -130,11 +130,13 @@
                                 <span>Capacidad: {{ item.capacity }}</span>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="mb-4">
-                            <Tag :value="item.statusLabel" severity="success" />
-                        </div>
-
+                <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                    <span class="text-black">{{ item.status || 'publicado' }}</span>
+                </div>
+                    <div>
                         <Button
                             label="Ver Detalles"
                             icon="pi pi-arrow-right"
