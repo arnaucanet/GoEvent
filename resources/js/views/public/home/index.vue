@@ -13,7 +13,10 @@
                         Conciertos, festivales, deporte y cultura en una sola web. Busca por ciudad, fecha o categoría y reserva en segundos.
                     </p>
 
-                    <div class="reveal-3 bg-white rounded-2xl p-3 sm:p-4 shadow-2xl max-w-3xl">
+                    <div
+                        class="reveal-3 rounded-2xl p-3 sm:p-4 shadow-2xl max-w-3xl"
+                        :class="isDarkTheme ? 'bg-gray-900' : 'bg-white'"
+                    >
                         <div class="grid grid-cols-1 md:grid-cols-12 gap-2 sm:gap-3">
                             <div class="md:col-span-6">
                                 <InputText
@@ -34,8 +37,9 @@
                                 />
                             </div>
                             <div class="md:col-span-3">
-                                <Button label="Buscar" icon="pi pi-search" class="w-full" :loading="isLoadingEvents" @click="applySearch" />
+                                <Button label="Buscar" icon="pi pi-search" class="w-full mt-auto !bg-blue-600 !border-blue-600 hover:!bg-blue-700" :loading="isLoadingEvents" @click="applySearch" />
                             </div>
+                            
                         </div>
                     </div>
 
@@ -73,7 +77,13 @@
         <section id="eventos" class="container mx-auto px-4 sm:px-6 lg:px-8 pb-14 sm:pb-16">
             <div class="flex items-center justify-between mb-6">
                 <h2 class="text-2xl sm:text-3xl font-bold text-surface-900 dark:text-surface-0">Eventos destacados</h2>
-                <Button label="Ver todos" text @click="resetFilters" />
+                <Button
+                    label="Ver todos"
+                    text
+                    class="hover:!bg-blue-100"
+                    :pt="{ label: { class: '!text-blue-600' } }"
+                    @click="router.push('/events')"
+                />
             </div>
 
             <div v-if="isLoadingFeatured" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -164,7 +174,7 @@
                             <Button label="Iniciar sesión" as="router-link" to="/login" outlined class="!text-white !border-white hover:!bg-white/10" />
                         </template>
                         <template v-else>
-                            <Button label="Ir a mi panel" as="router-link" to="/app" />
+                            <Button label="Ir a mi panel" as="router-link" class="w-full mt-auto !bg-blue-400 !border-blue-400 hover:!bg-blue-500" to="/app" />
                         </template>
                     </div>
                 </div>

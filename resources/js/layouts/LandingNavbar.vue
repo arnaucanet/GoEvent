@@ -12,7 +12,7 @@
             <button
                 v-if="!isDesktop"
                 @click="visibleMobileMenu = true"
-                class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                class="p-2 rounded-lg hover:bg-gray-100 transition-colors">
                 <i class="pi pi-bars text-2xl"></i>
             </button>
 
@@ -22,19 +22,19 @@
                     v-for="link in navLinks" 
                     :key="link.route" 
                     :to="link.route" 
-                    class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors"
+                    class="text-blue-400 hover:text-gray-400 font-medium transition-colors"
                 >
                     {{ link.label }}
                 </router-link>
                 
                 <!-- Actions -->
-                <div class="flex items-center gap-3 pl-6 border-l border-gray-200 dark:border-gray-700">
+                <div class="flex items-center gap-3 pl-6 border-l border-gray-200">
                     <LocaleSwitcher />
                     
                     <button 
                         type="button" 
                         @click="toggleDarkMode"
-                        class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                        class="p-2 rounded-lg hover:bg-gray-100 transition-colors">
                         <i :class="isDarkTheme ? 'pi-moon' : 'pi-sun'" class="pi text-lg"></i>
                     </button>
 
@@ -51,7 +51,7 @@
                         <button 
                             type="button" 
                             @click="toggle"
-                            class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                            class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors">
                             <Avatar :image="authStore().user.avatar" :label="authStore().user.name[0]" shape="circle" size="small" />
                             <span class="text-sm font-medium hidden xl:inline">{{ authStore().user?.name }}</span>
                             <i class="pi pi-chevron-down text-xs"></i>
