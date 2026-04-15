@@ -19,6 +19,7 @@
         <!-- Event Header -->
         <div class="bg-blue-600 p-4 text-white min-h-[6rem]">
           <h2 class="text-2xl font-bold mb-2 line-clamp-2 min-h-[3.5rem]">{{ event.title }}</h2>
+
           <div class="flex items-center gap-2 text-sm">
             <i class="pi pi-map-marker"></i>
             <span>{{ event.city || '-' }}</span>
@@ -27,10 +28,16 @@
 
         <!-- Event Body -->
         <div class="p-4 flex-1 flex flex-col">
+          
+          
           <!-- Description -->
           <p class="mb-3 line-clamp-2 min-h-[3.5rem]" :class="isDarkTheme ? 'text-gray-300' : 'text-gray-600'">
             {{ event.description }}
+            
           </p>
+          
+
+          
 
           <!-- Category -->
           <div class="mb-3">
@@ -50,10 +57,18 @@
               <span>Capacidad: {{ event.capacity }}</span>
             </div>
           </div>
+          
 
-          <div class="mb-4">
-            {{ event.status }}
+          <div class="flex items-center gap-2">
+                <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                <span class="text-slate-900 font-medium">{{ event.status || 'publicado' }}</span>
+              </div>
+
+          <div v-if="event.featured">
+              <i class="pi pi-star-fill text-yellow-500"></i>
+              <span class="text-black-800 font-semibold"> Evento Destacado</span>
           </div>
+          
 
           <!-- Button -->
           <Button 
