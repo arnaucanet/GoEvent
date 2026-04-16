@@ -40,10 +40,16 @@
 
                     <template v-if="!authStore().user?.name">
                         <router-link to="/login">
-                            <Button label="Login" text size="small" />
+                            <Button
+                                label="Login"
+                                text
+                                size="small"
+                                class="w-full !text-blue-600 hover:!bg-sky-100"
+                                :pt="{ label: { class: '!text-blue-600' } }"
+                            />
                         </router-link>
                         <router-link to="/register">
-                            <Button label="Registro" severity="primary" size="small" />
+                            <Button label="Registro" severity="primary" size="small" class="w-full mt-auto !bg-blue-600 !border-blue-600 hover:!bg-blue-700"/>
                         </router-link>
                     </template>
 

@@ -82,7 +82,7 @@
                             :label="$t('login')"
                             :loading="processing"
                             :disabled="processing"
-                            class="w-full btn-ticket-primary"
+                            class="w-full mt-auto !bg-blue-600 !border-blue-600 hover:!bg-blue-700"
                             size="large"
                         />
 
@@ -132,17 +132,5 @@ const { loginForm, validationErrors, processing, submitLogin } = useAuth();
     background: rgba(8, 47, 73, 0.35);
     border-radius: 0.85rem;
     padding: 0.65rem 0.8rem;
-}
-
-:deep(.btn-ticket-primary.p-button) {
-    background: linear-gradient(90deg, #0ea5e9 0%, #2563eb 100%);
-    border: 1px solid #2563eb;
-    color: #ffffff;
-    border-radius: 10px;
-    font-weight: 700;
-}
-
-:deep(.btn-ticket-primary.p-button:hover) {
-    filter: brightness(1.05);
 }
 </style>
