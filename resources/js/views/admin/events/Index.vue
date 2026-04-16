@@ -47,19 +47,14 @@
 
       <Column field="capacity" header="Capacity" sortable></Column>
 
+
+
+      <column  field="featured" header="featured" sortable></column>
       
 
-      <!-- Active -->
-      <Column field="status" header="Status" sortable>
-      </Column>
-      <!-- <Column field="active" header="Activo" sortable>
-        <template #body="slotProps">
-          <Tag 
-            :value="slotProps.data.active ? 'Activo' : 'Inactivo'" 
-            :severity="slotProps.data.active ? 'success' : 'danger'" 
-          />
-        </template>
-      </Column> -->
+
+      
+      <Column field="status" header="Status" sortable></Column>
 
 
 
