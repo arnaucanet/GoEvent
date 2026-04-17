@@ -196,19 +196,13 @@
                         Crea tu cuenta y recibe alertas personalizadas cuando salgan nuevas fechas en tu ciudad.
                     </p>
                     <div class="flex flex-wrap gap-3">
-                        <template v-if="!authStore().user?.name">
-                            <Button label="Crear cuenta" as="router-link" to="/register" severity="secondary" />
-                            <Button label="Iniciar sesión" as="router-link" to="/login" outlined class="!text-white !border-white hover:!bg-white/10" />
-                        </template>
-                        <template v-else>
-                                        <Button
-                                            label="Ir a mi panel"
-                                            class="w-full mt-4 !bg-blue-400 !border-blue-400 hover:!bg-blue-500 !text-white"
-                                            :pt="{
-                                                label: { class: '!text-white' },
-                                            }"
-                                        />
-                        </template>
+                        <Button
+                            label="Ir a mi panel"
+                            class="w-full mt-auto !bg-blue-400 !border-blue-400 hover:!bg-blue-500"
+                            :pt="{
+                                label: { class: '!text-white' },
+                            }"
+                        />
                     </div>
                 </div>
             </div>
