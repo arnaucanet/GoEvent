@@ -25,7 +25,7 @@
           <div class="flex flex-wrap gap-6">
             <div class="flex items-center gap-2">
               <i class="pi pi-map-marker"></i>
-              <span>{{ event.city?.name || '-' }}</span>
+              <span>{{ event.city || '-' }}</span>
             </div>
             <div class="flex items-center gap-2">
               <i class="pi pi-tag"></i>
@@ -56,10 +56,7 @@
           <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-slate-200 dark:border-gray-700 p-6">
             <!-- Tabs/Filters -->
             <div class="mb-6 flex gap-3 items-center">
-              <button class="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-sm">
-                <i class="pi pi-sliders-v"></i>
-                <span>Filtros</span>
-              </button>
+
             </div>
 
             <!-- Title -->
@@ -93,9 +90,7 @@
                       <span class="px-3 py-1 text-gray-900 dark:text-white font-semibold">{{ ticketQuantities[0] }}</span>
                       <button @click="incrementTicket(0)" class="px-2 py-1 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200">+</button>
                     </div>
-                    <button @click="incrementTicket(0)" class="w-10 h-10 bg-blue-500 hover:bg-blue-600 text-white rounded-full flex items-center justify-center transition-colors flex-shrink-0">
-                      <i class="pi pi-plus text-lg"></i>
-                    </button>
+
                   </div>
                 </div>
               </div>
@@ -116,9 +111,6 @@
                       <span class="px-3 py-1 text-gray-900 dark:text-white font-semibold">{{ ticketQuantities[1] }}</span>
                       <button @click="incrementTicket(1)" class="px-2 py-1 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200">+</button>
                     </div>
-                    <button @click="incrementTicket(1)" class="w-10 h-10 bg-blue-500 hover:bg-blue-600 text-white rounded-full flex items-center justify-center transition-colors flex-shrink-0">
-                      <i class="pi pi-plus text-lg"></i>
-                    </button>
                   </div>
                 </div>
               </div>
@@ -139,9 +131,7 @@
                       <span class="px-3 py-1 text-gray-900 dark:text-white font-semibold">{{ ticketQuantities[2] }}</span>
                       <button @click="incrementTicket(2)" class="px-2 py-1 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200">+</button>
                     </div>
-                    <button @click="incrementTicket(2)" class="w-10 h-10 bg-blue-500 hover:bg-blue-600 text-white rounded-full flex items-center justify-center transition-colors flex-shrink-0">
-                      <i class="pi pi-plus text-lg"></i>
-                    </button>
+                    
                   </div>
                 </div>
               </div>
@@ -164,7 +154,7 @@
 
             <!-- Try Tickets Button -->
             <Button 
-              label="Probar Entradas" 
+              label="Finalizar Compra" 
               icon="pi pi-shopping-cart"
               class="w-full"
               size="large"
@@ -196,7 +186,7 @@
                 <i class="pi pi-calendar text-xl text-green-600 dark:text-green-300"></i>
               </div>
               <div>
-                <h3 class="font-semibold text-gray-900 dark:text-white mb-1">Fecha de Término</h3>
+                <h3 class="font-semibold text-gray-900 dark:text-white mb-1">Fecha de Vencimiento</h3>
                 <p class="text-slate-600 dark:text-slate-400">{{ formatDate(event.end_date) }}</p>
               </div>
             </div>
@@ -223,7 +213,7 @@
               </div>
               <div>
                 <h3 class="font-semibold text-gray-900 dark:text-white mb-1">Ubicación</h3>
-                <p class="text-slate-600 dark:text-slate-400">{{ event.city?.name || 'No especificada' }}</p>
+                <p class="text-slate-600 dark:text-slate-400">{{ event.city || 'No especificada' }}</p>
               </div>
             </div>
           </div>
