@@ -34,7 +34,8 @@
                     <button 
                         type="button" 
                         @click="toggleDarkMode"
-                        class="p-2 rounded-lg hover:bg-gray-100 transition-colors">
+                        class="p-2 rounded-lg transition-colors"
+                        :class="isDarkTheme ? 'hover:bg-slate-700/90 text-slate-100' : 'hover:bg-gray-100 text-slate-700'">
                         <i :class="isDarkTheme ? 'pi-moon' : 'pi-sun'" class="pi text-lg"></i>
                     </button>
 
