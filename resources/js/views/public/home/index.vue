@@ -37,7 +37,17 @@
                                 />
                             </div>
                             <div class="md:col-span-3">
-                                <Button label="Buscar" icon="pi pi-search" class="w-full mt-auto !bg-blue-600 !border-blue-600 hover:!bg-blue-700" :loading="isLoadingEvents" @click="applySearch" />
+                                <Button
+                                    label="Buscar"
+                                    icon="pi pi-search"
+                                    class="w-full mt-auto !bg-blue-600 !border-blue-600 hover:!bg-blue-700 !text-white"
+                                    :pt="{
+                                        label: { class: '!text-white' },
+                                        icon: { class: '!text-white' }
+                                    }"
+                                    :loading="isLoadingEvents"
+                                    @click="applySearch"
+                                />
                             </div>
                             
                         </div>
@@ -161,7 +171,11 @@
                         <Button
                             label="Ver Detalles"
                             icon="pi pi-arrow-right"
-                            class="w-full mt-4 !bg-blue-600 !border-blue-600 hover:!bg-blue-700"
+                            class="w-full mt-4 !bg-blue-600 !border-blue-600 hover:!bg-blue-700 !text-white"
+                            :pt="{
+                                label: { class: '!text-white' },
+                                icon: { class: '!text-white' }
+                            }"
                             @click="goToEvent(item.id)"
                         />
                     </div>
@@ -187,7 +201,13 @@
                             <Button label="Iniciar sesión" as="router-link" to="/login" outlined class="!text-white !border-white hover:!bg-white/10" />
                         </template>
                         <template v-else>
-                            <Button label="Ir a mi panel" as="router-link" class="w-full mt-auto !bg-blue-400 !border-blue-400 hover:!bg-blue-500" to="/app" />
+                                        <Button
+                                            label="Ir a mi panel"
+                                            class="w-full mt-4 !bg-blue-400 !border-blue-400 hover:!bg-blue-500 !text-white"
+                                            :pt="{
+                                                label: { class: '!text-white' },
+                                            }"
+                                        />
                         </template>
                     </div>
                 </div>
