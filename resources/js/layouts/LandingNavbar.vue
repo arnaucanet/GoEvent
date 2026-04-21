@@ -5,7 +5,7 @@
         <nav class="container mx-auto px-6 py-4 flex items-center justify-between">
             <!-- Logo -->
             <router-link to="/" class="flex items-center gap-2">
-                <img src="/images/logo.svg" alt="logo" class="h-10 w-auto"/>
+                <img :src="isDarkTheme ? '/images/goevent-dark.svg' : '/images/goevent-light.svg'" alt="GoEvent" class="h-10 w-auto"/>
             </router-link>
 
             <!-- Mobile Menu Button -->
@@ -29,8 +29,6 @@
                 
                 <!-- Actions -->
                 <div class="flex items-center gap-3 pl-6 border-l border-gray-200">
-                    <LocaleSwitcher />
-                    
                     <button 
                         type="button" 
                         @click="toggleDarkMode"
@@ -82,7 +80,7 @@
                 <!-- Header -->
                 <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
                     <div class="flex items-center gap-2">
-                        <img src="/images/logo.svg" alt="logo" class="h-8"/>
+                        <img :src="isDarkTheme ? '/images/goevent-dark.svg' : '/images/goevent-light.svg'" alt="GoEvent" class="h-8 w-auto"/>
                         <span class="font-bold text-lg">Menu</span>
                     </div>
                     <button 
@@ -154,7 +152,6 @@
 import { useLayout } from "@/composables/layout.js";
 import useAuth from "@/composables/auth";
 import { authStore } from "../store/auth";
-import LocaleSwitcher from "../components/LocaleSwitcher.vue";
 import { ref, computed, onBeforeMount, onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 
