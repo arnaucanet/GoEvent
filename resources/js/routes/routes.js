@@ -65,6 +65,11 @@ export default [
                 path: 'events/:id',
                 component: () => import('../views/public/events/detail.vue'),
             },
+            {
+                name: 'events.compras',
+                path: 'events/:id/compras',
+                component: () => import('../views/public/events/compras.vue'),
+            },
 
             {
                 path: 'login',

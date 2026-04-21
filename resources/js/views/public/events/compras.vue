@@ -1,246 +1,203 @@
 <template>
-  <div class="event-tickets-page container mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-14">
+  <div class="compras-page bg-white dark:bg-gray-950 min-h-screen flex flex-col">
     <!-- Loading State -->
-    <div v-if="isLoading" class="flex items-center justify-center py-12">
-      <i class="pi pi-spin pi-spinner text-4xl text-blue-500"></i>
+    <div v-if="isLoading" class="flex items-center justify-center py-20 min-h-screen">
+      <i class="pi pi-spin pi-spinner text-5xl text-blue-500"></i>
     </div>
 
-    <!-- Event Tickets -->
-    <div v-else-if="event?.id" class="max-w-5xl mx-auto">
+    <!-- Checkout Page -->
+    <div v-else-if="event?.id" class="flex-1">
+      <!-- Header with Dark Background -->
+      <div class="bg-gray-900 text-white py-8">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h1 class="text-3xl md:text-4xl font-bold">PROCESO DE COMPRA</h1>
+              <div class="h-1 w-32 bg-blue-600 mt-2"></div>
+            </div>
+            <div class="text-right">
+              <p class="text-sm text-gray-400">Tiempo restante</p>
+              <p class="text-2xl font-bold">09:08</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Back Button -->
-      <button 
-        @click="goBack"
-        class="mb-6 flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium transition-colors"
-      >
-        <i class="pi pi-arrow-left"></i>
-        <span>Volver</span>
-      </button>
-
-      <!-- Header Section -->
-      <div class="bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg p-8 mb-8">
-        <h1 class="text-3xl md:text-4xl font-bold mb-2">
-            {{ event.title }}</h1>
-        <p class="text-blue-100 text-lg">Comprar Entradas</p>
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+        <button 
+          @click="goBack"
+          class="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium transition-colors mb-8"
+        >
+          <i class="pi pi-arrow-left"></i>
+          <span>Volver a entradas</span>
+        </button>
       </div>
 
-      <!-- Image Placeholder - Full Width & Taller -->
-      <div class="bg-slate-200 dark:bg-slate-700 rounded-lg p-16 mb-8 shadow-lg border border-slate-300 dark:border-slate-600 flex items-center justify-center min-h-[450px]">
-        <div class="text-center">
-          <i class="pi pi-image text-6xl text-slate-400 dark:text-slate-500 mb-4"></i>
-          <p class="text-slate-500 dark:text-slate-400 font-medium text-lg">Imagen del Evento</p>
-        </div>
-      </div>
+      <!-- Main Content: 2 Columns -->
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
+          <!-- LEFT COLUMN (2/3): Checkout Sections -->
+          <div class="lg:col-span-2 space-y-6">
+            
+            <!-- ENTREGA TICKETS -->
+            <section class="bg-white dark:bg-gray-800 rounded-lg border border-slate-200 dark:border-gray-700 p-6">
+              <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                <i class="pi pi-check text-green-600"></i>
+                ENTREGA TICKETS
+              </h2>
+              <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">Los tickets se enviarán a tu correo electrónico</p>
+              <div class="bg-slate-50 dark:bg-gray-700 rounded-lg p-4">
+                <p class="text-sm font-medium text-gray-900 dark:text-white">{{ userEmail }}</p>
+                <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">
+                  <a href="#" class="text-blue-600 dark:text-blue-400 hover:underline">Editar</a>
+                </p>
+              </div>
+            </section>
 
-      <!-- Event Description -->
-      <div class="bg-white dark:bg-gray-800 rounded-lg p-6 mb-8 shadow-lg border border-slate-200 dark:border-gray-700">
-        <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white flex items-center gap-2">
-          <i class="pi pi-info-circle text-blue-500"></i>
-          Descripción del Evento
-        </h2>
-        <p class="text-base leading-7 text-slate-600 dark:text-slate-400">
-          {{ event.description || 'Sin descripción disponible.' }}
-        </p>
-      </div>
+            <!-- EXTRAS DEL EVENTO -->
+            <section class="bg-white dark:bg-gray-800 rounded-lg border border-slate-200 dark:border-gray-700 p-6">
+              <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4">EXTRAS DEL EVENTO</h2>
+              <div class="space-y-4">
+                <label class="flex items-start gap-4 p-4 rounded-lg border border-slate-200 dark:border-gray-600 hover:border-blue-500 cursor-pointer transition-colors">
+                  <input type="radio" name="extras" value="none" class="mt-1" checked>
+                  <div class="flex-1">
+                    <p class="font-medium text-gray-900 dark:text-white">Sin extras</p>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">No añadir extras a la compra</p>
+                  </div>
+                </label>
+              </div>
+            </section>
 
-      <!-- Event Information Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <!-- Start Date -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg border border-slate-200 dark:border-gray-700">
-          <div class="flex items-start gap-3">
-            <div class="bg-blue-100 dark:bg-blue-900 rounded-lg p-3">
-              <i class="pi pi-calendar text-xl text-blue-600 dark:text-blue-300"></i>
-            </div>
-            <div>
-              <h3 class="font-semibold text-gray-900 dark:text-white mb-1">Fecha de Inicio</h3>
-              <p class="text-slate-600 dark:text-slate-400">{{ formatDate(event.start_date) }}</p>
-            </div>
+            <!-- PROTECCIÓN DE COMPRA -->
+            <section class="bg-white dark:bg-gray-800 rounded-lg border border-slate-200 dark:border-gray-700 p-6">
+              <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4">PROTECCIÓN DE COMPRA</h2>
+              <div class="space-y-4">
+                <label class="flex items-start gap-4 p-4 rounded-lg border border-slate-200 dark:border-gray-600 hover:border-blue-500 cursor-pointer transition-colors">
+                  <input type="radio" name="insurance" value="yes" class="mt-1">
+                  <div class="flex-1">
+                    <p class="font-medium text-gray-900 dark:text-white">Proteger mi compra</p>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">Cubre cancelaciones y cambios de fecha</p>
+                    <p class="text-sm font-semibold text-gray-900 dark:text-white mt-2">+ 12,00 €</p>
+                  </div>
+                </label>
+
+                <label class="flex items-start gap-4 p-4 rounded-lg border border-slate-200 dark:border-gray-600 hover:border-blue-500 cursor-pointer transition-colors">
+                  <input type="radio" name="insurance" value="no" class="mt-1" checked>
+                  <div class="flex-1">
+                    <p class="font-medium text-gray-900 dark:text-white">No proteger mi compra</p>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">Sin cobertura adicional</p>
+                  </div>
+                </label>
+              </div>
+            </section>
+
+            <!-- CONDICIONES DE COMPRA -->
+            <section class="bg-white dark:bg-gray-800 rounded-lg border border-slate-200 dark:border-gray-700 p-6">
+              <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4">CONDICIONES DE COMPRA</h2>
+              <label class="flex items-start gap-3 mb-6">
+                <input type="checkbox" class="mt-1">
+                <span class="text-sm text-slate-600 dark:text-slate-400">
+                  Confirmo que he leído y acepto los 
+                  <a href="#" class="text-blue-600 dark:text-blue-400 hover:underline">Términos de Compra</a>
+                  y la 
+                  <a href="#" class="text-blue-600 dark:text-blue-400 hover:underline">Política de Privacidad</a>
+                </span>
+              </label>
+              <Button 
+                label="Finalizar Compra" 
+                icon="pi pi-check"
+                class="w-full !bg-green-600 !border-green-600 hover:!bg-green-700"
+                size="large"
+                @click="finalizarCompra"
+              />
+            </section>
           </div>
-        </div>
 
-        <!-- Time -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg border border-slate-200 dark:border-gray-700">
-          <div class="flex items-start gap-3">
-            <div class="bg-blue-100 dark:bg-blue-900 rounded-lg p-3">
-              <i class="pi pi-clock text-xl text-blue-600 dark:text-blue-300"></i>
-            </div>
-            <div>
-              <h3 class="font-semibold text-gray-900 dark:text-white mb-1">Hora</h3>
-              <p class="text-slate-600 dark:text-slate-400">{{ formatTime(event.start_date) }}</p>
-            </div>
-          </div>
-        </div>
+          <!-- RIGHT COLUMN (1/3): Order Summary -->
+          <div class="lg:col-span-1">
+            <div class="sticky top-6 bg-white dark:bg-gray-800 rounded-lg border border-slate-200 dark:border-gray-700 p-6">
+              
+              <!-- Total Price -->
+              <div class="border-b border-slate-200 dark:border-gray-600 pb-4 mb-4">
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">TOTAL</h3>
+                <p class="text-3xl font-bold text-gray-900 dark:text-white">{{ totalPriceCurrency }}</p>
+              </div>
 
-        <!-- Location -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg border border-slate-200 dark:border-gray-700">
-          <div class="flex items-start gap-3">
-            <div class="bg-orange-100 dark:bg-orange-900 rounded-lg p-3">
-              <i class="pi pi-map-marker text-xl text-orange-600 dark:text-orange-300"></i>
-            </div>
-            <div>
-              <h3 class="font-semibold text-gray-900 dark:text-white mb-1">Ubicación</h3>
-              <p class="text-slate-600 dark:text-slate-400">{{ event.city?.name || 'Por especificar' }}</p>
-            </div>
-          </div>
-        </div>
+              <!-- Entradas Items -->
+              <div class="mb-6">
+                <h4 class="font-semibold text-gray-900 dark:text-white mb-3">ENTRADAS</h4>
+                <div class="space-y-2 text-sm">
+                  <div v-for="(item, index) in ticketsSummary" :key="index">
+                    <div v-if="item && item.quantity > 0">
+                        <p class="text-slate-600 dark:text-slate-400">
+                        <span class="font-medium">{{ item.label }}</span>
+                        <br>
+                        <span class="text-xs">{{ item.price }} € × {{ item.quantity }}</span>
+                        <span class="text-gray-900 dark:text-white font-semibold float-right">
+                            {{ (item.price * item.quantity).toFixed(2) }} €
+                        </span>
+                        </p>
+                    </div>
+                    </div>
+                  <div v-if="ticketsSummary.every(item => item.quantity === 0)" class="text-slate-500 dark:text-slate-400 italic">
+                    No hay entradas seleccionadas
+                  </div>
+                </div>
+              </div>
 
-        <!-- Capacity -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg border border-slate-200 dark:border-gray-700">
-          <div class="flex items-start gap-3">
-            <div class="bg-purple-100 dark:bg-purple-900 rounded-lg p-3">
-              <i class="pi pi-users text-xl text-purple-600 dark:text-purple-300"></i>
-            </div>
-            <div>
-              <h3 class="font-semibold text-gray-900 dark:text-white mb-1">Capacidad</h3>
-              <p class="text-slate-600 dark:text-slate-400">{{ event.capacity || 0 }} personas</p>
-            </div>
-          </div>
-        </div>
-      </div>
+              <!-- Event Info -->
+              <div class="bg-slate-50 dark:bg-gray-700 rounded-lg p-4">
+                <h4 class="font-semibold text-gray-900 dark:text-white mb-3">EVENTO</h4>
+                <div class="space-y-2 text-sm">
+                  <div class="flex items-start gap-2">
+                    <i class="pi pi-calendar text-blue-600 dark:text-blue-400 flex-shrink-0 mt-1"></i>
+                    <span class="text-slate-600 dark:text-slate-400">{{ eventDate }}</span>
+                  </div>
+                  <div class="flex items-start gap-2">
+                    <i class="pi pi-map-marker text-blue-600 dark:text-blue-400 flex-shrink-0 mt-1"></i>
+                    <span class="text-slate-600 dark:text-slate-400">{{ eventLocation }}</span>
+                  </div>
+                </div>
+              </div>
 
-      <!-- Tickets Section Header -->
-      <div class="mb-8">
-        <h2 class="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-          <i class="pi pi-ticket text-blue-500"></i>
-          Tipos de Entradas
-        </h2>
-        <p class="text-slate-600 dark:text-slate-400 mt-2">Selecciona el tipo de entrada que deseas comprar</p>
-      </div>
-
-      <!-- Tickets - Vertical Blocks (Full Width) -->
-      <div class="space-y-4 mb-8">
-        <!-- Pista Ticket -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg border-2 border-slate-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-400 transition-colors cursor-pointer"
-          @click="selectTicket('pista')"
-          :class="{ 'border-blue-500 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/20': selectedTicket === 'pista' }">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-4">
-              <div class="flex-shrink-0">
-                <i class="pi pi-check-circle text-3xl" :class="selectedTicket === 'pista' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-300 dark:text-slate-600'"></i>
+              <!-- Seat Map Placeholder -->
+              <div class="mt-4 bg-slate-100 dark:bg-gray-600 rounded-lg overflow-hidden flex items-center justify-center min-h-[200px]">
+                <img 
+                  v-if="event.image" 
+                  :src="`/images/${event.image}`" 
+                  :alt="event.title"
+                  class="w-full h-full object-cover"
+                >
+                <div v-else class="text-center">
+                  <i class="pi pi-image text-4xl text-slate-400 dark:text-slate-500 mb-2"></i>
+                  <p class="text-sm text-slate-600 dark:text-slate-400">Mapa de Asientos</p>
+                </div>
               </div>
-              <div>
-                <h3 class="text-xl font-bold text-gray-900 dark:text-white">Pista</h3>
-                <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">Acceso a la zona de pista - Vista directa del escenario</p>
-              </div>
-            </div>
-            <div class="text-right flex-shrink-0">
-              <p class="text-3xl font-bold text-blue-600 dark:text-blue-400">99€</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Gradería Ticket -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg border-2 border-slate-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-400 transition-colors cursor-pointer"
-          @click="selectTicket('graderia')"
-          :class="{ 'border-blue-500 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/20': selectedTicket === 'graderia' }">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-4">
-              <div class="flex-shrink-0">
-                <i class="pi pi-check-circle text-3xl" :class="selectedTicket === 'graderia' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-300 dark:text-slate-600'"></i>
-              </div>
-              <div>
-                <h3 class="text-xl font-bold text-gray-900 dark:text-white">Gradería</h3>
-                <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">Asiento en gradería - Vista cómoda y segura del evento</p>
-              </div>
-            </div>
-            <div class="text-right flex-shrink-0">
-              <p class="text-3xl font-bold text-blue-600 dark:text-blue-400">99€</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Front Stage Ticket -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg border-2 border-slate-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-400 transition-colors cursor-pointer"
-          @click="selectTicket('front-stage')"
-          :class="{ 'border-blue-500 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/20': selectedTicket === 'front-stage' }">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-4">
-              <div class="flex-shrink-0">
-                <i class="pi pi-check-circle text-3xl" :class="selectedTicket === 'front-stage' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-300 dark:text-slate-600'"></i>
-              </div>
-              <div>
-                <h3 class="text-xl font-bold text-gray-900 dark:text-white">Front Stage</h3>
-                <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">Zona frontal al escenario - Experiencia premium de primera fila</p>
-              </div>
-            </div>
-            <div class="text-right flex-shrink-0">
-              <p class="text-3xl font-bold text-blue-600 dark:text-blue-400">180€</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- VIP Pass Ticket -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg border-2 border-slate-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-400 transition-colors cursor-pointer"
-          @click="selectTicket('vip')"
-          :class="{ 'border-blue-500 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/20': selectedTicket === 'vip' }">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-4">
-              <div class="flex-shrink-0">
-                <i class="pi pi-star-fill text-3xl" :class="selectedTicket === 'vip' ? 'text-yellow-500' : 'text-slate-300 dark:text-slate-600'"></i>
-              </div>
-              <div>
-                <h3 class="text-xl font-bold text-gray-900 dark:text-white">VIP Pass</h3>
-                <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">Acceso VIP premium - Incluye zona VIP, parking y servicios especiales</p>
-              </div>
-            </div>
-            <div class="text-right flex-shrink-0">
-              <p class="text-3xl font-bold text-blue-600 dark:text-blue-400">299€</p>
             </div>
           </div>
         </div>
       </div>
-
-      <!-- Selected Ticket Summary -->
-      <div v-if="selectedTicket" class="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30 rounded-lg p-6 mb-8 border-2 border-blue-200 dark:border-blue-700">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-slate-600 dark:text-slate-400 font-semibold">Entrada seleccionada</p>
-            <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">
-              {{ getTicketLabel(selectedTicket) }}
-            </p>
-          </div>
-          <div class="text-right">
-            <p class="text-sm text-slate-600 dark:text-slate-400 font-semibold">Precio Total</p>
-            <p class="text-4xl font-bold text-blue-600 dark:text-blue-400">
-              {{ getTicketPrice(selectedTicket) }}€
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Buy Button -->
-      <Button 
-        label="Comprar Entrada" 
-        icon="pi pi-shopping-cart"
-        class="w-full"
-        size="large"
-        style="background-color: #3b82f6; border-color: #3b82f6; padding: 1rem; font-size: 1.125rem; font-weight: 600;"
-        :disabled="!selectedTicket"
-        @click="handleCompra"
-      />
-      <p v-if="!selectedTicket" class="text-center text-slate-600 dark:text-slate-400 text-sm mt-3">
-        Selecciona un tipo de entrada para continuar
-      </p>
     </div>
 
     <!-- Not Found State -->
-    <div v-else class="text-center py-12">
-      <i class="pi pi-inbox text-5xl text-slate-400"></i>
-      <p class="text-slate-600 dark:text-slate-400 text-lg mt-4">Evento no encontrado</p>
+    <div v-else class="flex-1 container mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+      <i class="pi pi-inbox text-6xl text-slate-300 dark:text-slate-600 mb-4"></i>
+      <p class="text-slate-600 dark:text-slate-400 text-lg mb-6">Evento no encontrado</p>
       <Button 
         label="Volver"
         icon="pi pi-arrow-left"
-        class="mt-6"
         @click="goBack"
       />
     </div>
   </div>
 
-  <!-- Global Footer -->
   <AppFooter />
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import Button from 'primevue/button';
 import AppFooter from '@/components/AppFooter.vue';
@@ -248,80 +205,115 @@ import useEvents from '@/composables/events';
 
 const router = useRouter();
 const route = useRoute();
-const { event, isLoading, getEvent } = useEvents();
+const { event, isLoading, getPublicEvent } = useEvents();
 
-const selectedTicket = ref(null);
+const ticketQuantities = ref([0, 0, 0]);
+const userEmail = ref('usuario@ejemplo.com');
 
-const tickets = {
-  pista: { label: 'Pista', price: 99 },
-  graderia: { label: 'Gradería', price: 99 },
-  'front-stage': { label: 'Front Stage', price: 180 },
-  vip: { label: 'VIP Pass', price: 299 }
-};
+const ticketDetails = [
+  { label: 'Front Stage Pista', price: 102 },
+  { label: 'Pista', price: 51 },
+  { label: 'Asiento Reservado Grada', price: 102 }
+];
 
-const getTicketLabel = (ticketType) => {
-  return tickets[ticketType]?.label || 'N/A';
-};
 
-const getTicketPrice = (ticketType) => {
-  return tickets[ticketType]?.price || 0;
-};
+const ticketsSummary = computed(() => {
+  return ticketDetails.map((ticket, index) => ({
+    ...ticket,
+    quantity: ticketQuantities.value[index]
+  }));
+});
 
-const selectTicket = (ticketType) => {
-  selectedTicket.value = selectedTicket.value === ticketType ? null : ticketType;
-};
+const totalPrice = computed(() => {
+  return ticketDetails.reduce((total, ticket, index) => {
+    return total + (ticket.price * ticketQuantities.value[index]);
+  }, 0);
+});
 
-const formatDate = (dateStr) => {
-  if (!dateStr) return 'Fecha no especificada';
-  const date = new Date(dateStr);
+const totalPriceCurrency = computed(() => {
+  return totalPrice.value.toFixed(2) + ' €';
+});
+
+const eventDate = computed(() => {
+  if (!event.value?.start_date) return '-';
+  const date = new Date(event.value.start_date);
   return date.toLocaleDateString('es-ES', {
-    weekday: 'long',
+    day: 'numeric',
+    month: 'short',
     year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
-};
-
-const formatTime = (dateStr) => {
-  if (!dateStr) return 'Hora no especificada';
-  const date = new Date(dateStr);
-  return date.toLocaleTimeString('es-ES', {
     hour: '2-digit',
     minute: '2-digit'
   });
-};
+});
 
-const handleCompra = () => {
-  console.log('🛒 Intento de compra:', {
-    eventId: event.value.id,
-    ticket: selectedTicket.value,
-    label: getTicketLabel(selectedTicket.value),
-    price: getTicketPrice(selectedTicket.value)
-  });
-};
+const eventLocation = computed(() => {
+  return event.value?.city || 'Ubicación no especificada';
+});
+
 
 const goBack = () => {
-  router.push({ name: 'events.detail', params: { id: event.value.id } });
+  router.back();
+};
+
+const finalizarCompra = async () => {
+  try {
+    const totalSeleccionadas = ticketQuantities.value.reduce((a, b) => a + b, 0);
+    
+    console.log('🎫 Compra finalizada:', {
+      entradas: ticketsSummary.value.filter(t => t.quantity > 0),
+      total: totalPrice.value,
+      email: userEmail.value,
+      totalTickets: totalSeleccionadas
+    });
+
+    await new Promise(resolve => setTimeout(resolve, 800));
+
+    sessionStorage.removeItem('ticketQuantities');
+    sessionStorage.removeItem('userEmail');
+
+    // Mostrar confirmación
+    alert('✅ ¡Compra completada exitosamente! Recibirás los detalles en tu correo.');
+
+    // Redirigir a home
+    router.push({ name: 'home' });
+  } catch (error) {
+    console.error('Error al finalizar compra:', error);
+    alert('❌ Error al procesar la compra. Por favor intenta de nuevo.');
+  }
+};
+
+const formatDate = (dateStr) => {
+  if (!dateStr) return '-';
+  const date = new Date(dateStr);
+  return date.toLocaleDateString('es-ES', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
 };
 
 onMounted(() => {
   const eventId = route.params.id;
+  
+  // Get ticket quantities from sessionStorage
+  const savedTickets = sessionStorage.getItem('ticketQuantities');
+  if (savedTickets) {
+    try {
+      ticketQuantities.value = JSON.parse(savedTickets);
+    } catch (e) {
+      console.log('Error parsing tickets:', e);
+    }
+  }
+  
+  // Get user email from sessionStorage if available
+  const savedEmail = sessionStorage.getItem('userEmail');
+  if (savedEmail) {
+    userEmail.value = savedEmail;
+  }
+
+  // Load event details
   if (eventId) {
-    getEvent(eventId);
+    getPublicEvent(eventId);
   }
 });
 </script>
-
-<style scoped>
-/* Smooth transitions */
-.transition-colors {
-  transition: border-color 0.3s ease, background-color 0.3s ease;
-}
-
-/* Dark mode adjustments */
-@media (prefers-color-scheme: dark) {
-  .event-tickets-page {
-    background-color: transparent;
-  }
-}
-</style>

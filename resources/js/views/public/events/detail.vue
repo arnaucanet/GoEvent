@@ -44,8 +44,14 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
           
           <!-- LEFT COLUMN: Event Image / Seat Map -->
-          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-slate-200 dark:border-gray-700 p-8 flex items-center justify-center min-h-[500px]">
-            <div class="text-center">
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-slate-200 dark:border-gray-700 overflow-hidden flex items-center justify-center min-h-[500px]">
+            <img 
+              v-if="event.image" 
+              :src="`/images/${event.image}`" 
+              :alt="event.title"
+              class="w-full h-full object-cover"
+            >
+            <div v-else class="text-center">
               <i class="pi pi-image text-6xl text-slate-300 dark:text-slate-600 mb-4"></i>
               <p class="text-slate-500 dark:text-slate-400 font-medium text-lg">Imagen del Evento</p>
               <p class="text-sm text-slate-400 dark:text-slate-500 mt-2">O Mapa de Asientos</p>
@@ -283,7 +289,10 @@ const decrementTicket = (index) => {
 const tryTickets = () => {
   const hasSelection = ticketQuantities.value.some(qty => qty > 0);
   if (hasSelection) {
-    console.log('🎫 Intentando comprar:', {
+    // Guardar datos en sessionStorage para que compras.vue pueda acceder
+    sessionStorage.setItem('ticketQuantities', JSON.stringify(ticketQuantities.value));
+    
+    console.log('🎫 Navegando a compra con:', {
       eventId: event.value.id,
       tickets: ticketQuantities.value,
       details: tickets.map((t, i) => ({
@@ -291,8 +300,11 @@ const tryTickets = () => {
         quantity: ticketQuantities.value[i]
       }))
     });
-    // Aquí puedes navegar a una página de checkout si lo deseas
-    // router.push({ name: 'events.compras', params: { id: event.value.id } });
+    
+    // Navegar a la página de compras
+    router.push({ name: 'events.compras', params: { id: event.value.id } });
+  } else {
+    alert('Por favor selecciona al menos una entrada');
   }
 };
 
