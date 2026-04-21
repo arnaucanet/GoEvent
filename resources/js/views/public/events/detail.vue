@@ -180,9 +180,11 @@
             </div>
 
             <!-- Try Tickets Button -->
-            <Button label="Finalizar Compra" icon="pi pi-shopping-cart"
-              class="w-full !bg-blue-600 !border-blue-600 hover:!bg-blue-700" size="large"
-              style="padding: 0.875rem; font-size: 1rem; font-weight: 600;" @click="tryTickets" />
+              <Button label="Finalizar Compra" icon="pi pi-shopping-cart"
+                class="w-full !bg-blue-600 !border-blue-600 hover:!bg-blue-700" size="large" :pt="{
+                    label: { class: '!text-white' },
+                    icon: { class: '!text-white' }
+                }" @click="tryTickets" />
           </div>
         </div>
 

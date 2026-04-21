@@ -29,8 +29,6 @@
                 
                 <!-- Actions -->
                 <div class="flex items-center gap-3 pl-6 border-l border-gray-200">
-                    <LocaleSwitcher />
-                    
                     <button 
                         type="button" 
                         @click="toggleDarkMode"
@@ -154,7 +152,6 @@
 import { useLayout } from "@/composables/layout.js";
 import useAuth from "@/composables/auth";
 import { authStore } from "../store/auth";
-import LocaleSwitcher from "../components/LocaleSwitcher.vue";
 import { ref, computed, onBeforeMount, onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 
