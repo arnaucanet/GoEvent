@@ -65,6 +65,15 @@ export default [
                 path: 'events/:id',
                 component: () => import('../views/public/events/detail.vue'),
             },
+            {
+                name: 'app.profile',
+                path: 'app/profile',
+                component: () => import('../views/user/profile.vue'),
+                beforeEnter: requireLogin,
+                meta: {
+                    breadCrumb: 'Perfil',
+                },
+            },
 
             {
                 path: 'login',
@@ -100,14 +109,6 @@ export default [
         beforeEnter: requireLogin,
         meta: { breadCrumb: '.' },
         children: [
-            {
-                name: 'app.profile',
-                path: 'profile',
-                component: () => import('../views/user/profile.vue'),
-                meta: {
-                    breadCrumb: 'Perfil',
-                },
-            },
             {
                 name: 'events.compras',
                 path: 'events/:id/compras',
