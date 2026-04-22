@@ -12,7 +12,7 @@ class EventController extends Controller
     private function publicEventsQuery()
     {
         return Event::query()
-            ->with(['category'])
+            ->with(['category', 'extras'])
             ->where('status', 'publicado')
             ->where(function ($query) {
                 $query->whereNull('end_date')
@@ -118,6 +118,7 @@ class EventController extends Controller
             'title' => ['required', 'string', 'max:255', 'min:2'],
             'description' => ['nullable', 'string', 'min:2'],
             'city' => ['nullable', 'string', 'max:100'],
+            'extra' => ['nullable', 'string'],
             'venue' => ['nullable', 'string', 'max:150'],
             'start_date' => ['required', 'date'],
             'end_date' => ['nullable', 'date', 'after:start_date'],

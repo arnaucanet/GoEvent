@@ -88,30 +88,12 @@
             <section class="bg-white dark:bg-gray-800 rounded-lg border border-slate-200 dark:border-gray-700 p-6">
               <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4">EXTRAS DEL EVENTO</h2>
               <div class="space-y-4">
-                <label class="flex items-start gap-4 p-4 rounded-lg border border-slate-200 dark:border-gray-600 hover:border-blue-500 cursor-pointer transition-colors" :class="{ 'border-blue-500 bg-blue-50 dark:bg-blue-900/20': earlyEntrySelected }">
-                  <input type="checkbox" class="mt-1" v-model="earlyEntrySelected">
+                <label v-for="extra in event?.extras || []" :key="extra.id" class="flex items-start gap-4 p-4 rounded-lg border border-slate-200 dark:border-gray-600 hover:border-blue-500 cursor-pointer transition-colors" :class="{ 'border-blue-500 bg-blue-50 dark:bg-blue-900/20': selectedExtras.includes(extra.id) }">
+                  <input type="checkbox" class="mt-1" :value="extra.id" v-model.number="selectedExtras">
                   <div class="flex-1">
-                    <p class="font-medium text-gray-900 dark:text-white">Early Entry (Entrada Anticipada)</p>
-                    <p class="text-sm text-slate-600 dark:text-slate-400">Acceso antes que el público general</p>
-                    <p class="text-sm font-semibold text-gray-900 dark:text-white mt-2">+ 15,00 €</p>
-                  </div>
-                </label>
-
-                <label class="flex items-start gap-4 p-4 rounded-lg border border-slate-200 dark:border-gray-600 hover:border-blue-500 cursor-pointer transition-colors" :class="{ 'border-blue-500 bg-blue-50 dark:bg-blue-900/20': parkingSelected }">
-                  <input type="checkbox" class="mt-1" v-model="parkingSelected">
-                  <div class="flex-1">
-                    <p class="font-medium text-gray-900 dark:text-white">Parking Reservado</p>
-                    <p class="text-sm text-slate-600 dark:text-slate-400">Estacionamiento garantizado cerca del evento</p>
-                    <p class="text-sm font-semibold text-gray-900 dark:text-white mt-2">+ 12,00 €</p>
-                  </div>
-                </label>
-
-                <label class="flex items-start gap-4 p-4 rounded-lg border border-slate-200 dark:border-gray-600 hover:border-blue-500 cursor-pointer transition-colors" :class="{ 'border-blue-500 bg-blue-50 dark:bg-blue-900/20': merchandiseSelected }">
-                  <input type="checkbox" class="mt-1" v-model="merchandiseSelected">
-                  <div class="flex-1">
-                    <p class="font-medium text-gray-900 dark:text-white">Pulsera o Recuerdo del Evento</p>
-                    <p class="text-sm text-slate-600 dark:text-slate-400">Llévate un recuerdo exclusivo del evento</p>
-                    <p class="text-sm font-semibold text-gray-900 dark:text-white mt-2">+ 6,00 €</p>
+                    <p class="font-medium text-gray-900 dark:text-white">{{ extra.name }}</p>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">{{ extra.description }}</p>
+                    <p class="text-sm font-semibold text-gray-900 dark:text-white mt-2">+ {{ parseFloat(extra.price).toFixed(2) }} €</p>
                   </div>
                 </label>
               </div>
@@ -191,31 +173,19 @@
               <div class="mb-6">
                 <h4 class="font-semibold text-gray-900 dark:text-white mb-3">EXTRAS</h4>
                 <div class="space-y-2 text-sm">
+                  <div v-for="extra in selectedExtrasData" :key="extra.id" class="text-slate-600 dark:text-slate-400">
+                    <p>
+                      <span class="font-medium">{{ extra.name }}</span>
+                      <span class="text-gray-900 dark:text-white font-semibold float-right">{{ parseFloat(extra.price).toFixed(2) }} €</span>
+                    </p>
+                  </div>
                   <div v-if="insuranceSelected" class="text-slate-600 dark:text-slate-400">
                     <p>
                       <span class="font-medium">Protección de Compra</span>
                       <span class="text-gray-900 dark:text-white font-semibold float-right">12,00 €</span>
                     </p>
                   </div>
-                  <div v-if="earlyEntrySelected" class="text-slate-600 dark:text-slate-400">
-                    <p>
-                      <span class="font-medium">Early Entry</span>
-                      <span class="text-gray-900 dark:text-white font-semibold float-right">15,00 €</span>
-                    </p>
-                  </div>
-                  <div v-if="parkingSelected" class="text-slate-600 dark:text-slate-400">
-                    <p>
-                      <span class="font-medium">Parking Reservado</span>
-                      <span class="text-gray-900 dark:text-white font-semibold float-right">12,00 €</span>
-                    </p>
-                  </div>
-                  <div v-if="merchandiseSelected" class="text-slate-600 dark:text-slate-400">
-                    <p>
-                      <span class="font-medium">Pulsera/Recuerdo</span>
-                      <span class="text-gray-900 dark:text-white font-semibold float-right">6,00 €</span>
-                    </p>
-                  </div>
-                  <div v-if="!insuranceSelected && !earlyEntrySelected && !parkingSelected && !merchandiseSelected" class="text-slate-500 dark:text-slate-400 italic">
+                  <div v-if="selectedExtrasData.length === 0 && !insuranceSelected" class="text-slate-500 dark:text-slate-400 italic">
                     Sin extras
                   </div>
                 </div>
@@ -284,9 +254,7 @@ const userEmail = ref('usuario@ejemplo.com');
 const emailEdit = ref('');
 const editingEmail = ref(false);
 const insuranceSelected = ref(false);
-const earlyEntrySelected = ref(false);
-const parkingSelected = ref(false);
-const merchandiseSelected = ref(false);
+const selectedExtras = ref([]);
 
 const ticketDetails = [
   { label: 'Front Stage Pista', price: 102 },
@@ -308,16 +276,26 @@ const totalPrice = computed(() => {
   }, 0);
   
   let extrasTotal = 0;
+  const extrasData = event.value?.extras || [];
+  selectedExtras.value.forEach(extraId => {
+    const extra = extrasData.find(e => e.id === extraId);
+    if (extra) {
+      extrasTotal += parseFloat(extra.price);
+    }
+  });
+  
   if (insuranceSelected.value) extrasTotal += 12;
-  if (earlyEntrySelected.value) extrasTotal += 15;
-  if (parkingSelected.value) extrasTotal += 12;
-  if (merchandiseSelected.value) extrasTotal += 6;
   
   return ticketsTotal + extrasTotal;
 });
 
 const totalPriceCurrency = computed(() => {
   return totalPrice.value.toFixed(2) + ' €';
+});
+
+const selectedExtrasData = computed(() => {
+  const extrasData = event.value?.extras || [];
+  return extrasData.filter(extra => selectedExtras.value.includes(extra.id));
 });
 
 const eventDate = computed(() => {
@@ -349,13 +327,15 @@ const finalizarCompra = async () => {
       entradas: ticketsSummary.value.filter(t => t.quantity > 0),
       total: totalPrice.value,
       email: userEmail.value,
-      totalTickets: totalSeleccionadas
+      totalTickets: totalSeleccionadas,
+      extras: selectedExtrasData.value
     });
 
     await new Promise(resolve => setTimeout(resolve, 800));
 
     sessionStorage.removeItem('ticketQuantities');
     sessionStorage.removeItem('userEmail');
+    sessionStorage.removeItem('selectedExtras');
 
     alert('✅ ¡Compra completada exitosamente! Recibirás los detalles en tu correo.');
 
@@ -409,6 +389,15 @@ onMounted(() => {
   const savedEmail = sessionStorage.getItem('userEmail');
   if (savedEmail) {
     userEmail.value = savedEmail;
+  }
+
+  const savedExtras = sessionStorage.getItem('selectedExtras');
+  if (savedExtras) {
+    try {
+      selectedExtras.value = JSON.parse(savedExtras);
+    } catch (e) {
+      console.log('Error parsing extras:', e);
+    }
   }
 
   if (eventId) {

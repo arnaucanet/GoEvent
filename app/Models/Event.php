@@ -9,7 +9,7 @@ class Event extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'description', 'image', 'start_date', 'end_date', 'capacity', 'city', 'featured', 'status', 'user_id', 'category_id', 'city', 'venue', 'price'];
+    protected $fillable = ['title', 'description', 'image', 'extra', 'start_date', 'end_date', 'capacity', 'city', 'featured', 'status', 'user_id', 'category_id', 'city', 'venue', 'price'];
 
     protected $casts = [
         'featured' => 'boolean',
@@ -26,6 +26,11 @@ class Event extends Model
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function extras()
+    {
+        return $this->hasMany(Extra::class);
     }
 
 }
