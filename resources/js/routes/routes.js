@@ -78,6 +78,9 @@ export default [
                 name: 'events.compras',
                 path: 'events/:id/compras',
                 component: () => import('../views/public/events/compras.vue'),
+                meta: {
+                    breadCrumb: 'Comprar Entradas',
+                },
             },
 
             {
@@ -114,14 +117,7 @@ export default [
         beforeEnter: requireLogin,
         meta: { breadCrumb: '.' },
         children: [
-            {
-                name: 'events.compras',
-                path: 'events/:id/compras',
-                component: () => import('../views/public/events/compras.vue'),
-                meta: {
-                    breadCrumb: 'Comprar Entradas',
-                },
-            },
+           
         ]
     },
 

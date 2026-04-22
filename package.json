@@ -23,6 +23,7 @@
     "dependencies": {
         "@casl/ability": "^6.7.2",
         "@casl/vue": "^2.2.2",
+        "@chenfengyuan/vue-countdown": "^2.1.0",
         "@fortawesome/fontawesome-free": "^ 7.1.0",
         "@fortawesome/fontawesome-svg-core": "^ 7.1.0",
         "@fortawesome/free-regular-svg-icons": "^ 7.1.0",
