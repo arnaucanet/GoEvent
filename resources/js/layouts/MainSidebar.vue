@@ -10,7 +10,7 @@
         <div class="flex items-center justify-center p-4 border-b border-gray-100 dark:border-gray-800 shrink-0 transition-all duration-300"
              :class="props.isCollapsed ? 'h-16' : 'h-24'">
             <div class="flex items-center gap-3 overflow-hidden whitespace-nowrap transition-all duration-300 w-full justify-center">
-                <img src="/images/logo.svg" alt="Logo" class="transition-all duration-300 object-contain" 
+                <img :src="isDarkTheme ? '/images/goevent-dark.svg' : '/images/goevent-light.svg'" alt="GoEvent" class="transition-all duration-300 object-contain"
                      :class="props.isCollapsed ? 'h-8 w-8' : 'h-16 w-auto max-w-full'"/>
             </div>
         </div>
@@ -79,10 +79,12 @@
 import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useAbility } from '@casl/vue';
+import { useLayout } from '../composables/layout';
 
 const route = useRoute();
 const router = useRouter();
 const { can } = useAbility();
+const { isDarkTheme } = useLayout();
 
 const props = defineProps({
     sidebarOpen: {
