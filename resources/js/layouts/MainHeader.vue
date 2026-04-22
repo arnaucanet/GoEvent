@@ -3,8 +3,8 @@
         <div class="flex grow items-center justify-between p-1 md:px-6 2xl:px-11">
             <div class="flex items-center gap-2 sm:gap-4">
                 <!-- Toggle Button - Mobile -->
-                <button 
-                    @click="emit('toggleSidebar')" 
+                <button
+                    @click="emit('toggleSidebar')"
                     class="z-99999 flex items-center justify-center w-9 h-9 rounded-lg border transition-colors lg:hidden"
                     aria-label="Toggle sidebar"
                 >
@@ -12,14 +12,26 @@
                 </button>
 
                 <!-- Toggle Button - Desktop (para colapsar/expandir) -->
-                <button 
-                    @click="emit('toggleCollapse')" 
+                <button
+                    @click="emit('toggleCollapse')"
                     class="hidden lg:flex items-center justify-center w-9 h-9 rounded-lg border transition-colors"
                     :title="props.isCollapsed ? 'Expandir sidebar' : 'Colapsar sidebar'"
                     aria-label="Toggle sidebar"
                 >
                     <i :class="props.isCollapsed ? 'pi pi-angle-right' : 'pi pi-angle-left'" class="text-lg"></i>
                 </button>
+
+                <!-- Breadcrumbs -->
+                <nav v-if="props.breadcrumbs && props.breadcrumbs.length" class="hidden sm:flex items-center gap-1 text-sm">
+                    <router-link :to="route.path.startsWith('/app') ? '/app' : '/admin'" class="breadcrumb-home-link flex items-center gap-1">
+                        <i class="pi pi-home text-xs"></i>
+                        <span>Dashboard</span>
+                    </router-link>
+                    <template v-for="(crumb, i) in props.breadcrumbs" :key="i">
+                        <i class="pi pi-chevron-right text-xs breadcrumb-separator"></i>
+                        <router-link :to="crumb.route" class="breadcrumb-link">{{ crumb.label }}</router-link>
+                    </template>
+                </nav>
             </div>
 
             <div class="flex items-center gap-2 sm:gap-3">
@@ -107,6 +119,10 @@ const props = defineProps({
     isCollapsed: {
         type: Boolean,
         default: false
+    },
+    breadcrumbs: {
+        type: Array,
+        default: () => []
     }
 });
 
@@ -145,6 +161,25 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+/* Breadcrumbs */
+.breadcrumb-home-link {
+    color: #3b82f6;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+.breadcrumb-home-link:hover { color: #2563eb; }
+
+.breadcrumb-separator { color: #cbd5e1; }
+
+.breadcrumb-link {
+    color: #64748b;
+    font-weight: 400;
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+.breadcrumb-link:hover { color: #1e293b; }
+
 /* Asegurar que los iconos PrimeIcons se muestren correctamente */
 .pi,
 [class^="pi-"],

@@ -10,7 +10,7 @@
                             Dashboard
                         </h1>
                         <p class="page-description">
-                            Bienvenido al panel de administración. Desde aquí puedes gestionar usuarios, posts, categorías y más.
+                            Bienvenido al panel de administración. Desde aquí puedes gestionar usuarios, eventos, categorías y más.
                         </p>
                     </div>
                 </div>
@@ -27,7 +27,7 @@
                         </div>
                         <div class="stat-card-info">
                             <p class="stat-card-label">Usuarios</p>
-                            <p class="stat-card-value">{{ stats.users || 0 }}</p>
+                            <p class="stat-card-value">{{ stats.users }}</p>
                         </div>
                     </div>
                 </template>
@@ -36,12 +36,12 @@
             <Card class="dashboard-stat-card">
                 <template #content>
                     <div class="stat-card-content">
-                        <div class="stat-card-icon stat-icon-success">
-                            <i class="pi pi-file"></i>
+                        <div class="stat-card-icon stat-icon-info">
+                            <i class="pi pi-calendar"></i>
                         </div>
                         <div class="stat-card-info">
-                            <p class="stat-card-label">Posts</p>
-                            <p class="stat-card-value">{{ stats.posts || 0 }}</p>
+                            <p class="stat-card-label">Eventos</p>
+                            <p class="stat-card-value">{{ stats.events }}</p>
                         </div>
                     </div>
                 </template>
@@ -55,7 +55,7 @@
                         </div>
                         <div class="stat-card-info">
                             <p class="stat-card-label">Categorías</p>
-                            <p class="stat-card-value">{{ stats.categories || 0 }}</p>
+                            <p class="stat-card-value">{{ stats.categories }}</p>
                         </div>
                     </div>
                 </template>
@@ -69,7 +69,7 @@
                         </div>
                         <div class="stat-card-info">
                             <p class="stat-card-label">Roles</p>
-                            <p class="stat-card-value">{{ stats.roles || 0 }}</p>
+                            <p class="stat-card-value">{{ stats.roles }}</p>
                         </div>
                     </div>
                 </template>
@@ -85,10 +85,7 @@
                         Acciones Rápidas
                     </h2>
                     <div class="dashboard-actions-grid">
-                        <router-link
-                            to="/admin/users"
-                            class="dashboard-action-item"
-                        >
+                        <router-link to="/admin/users" class="dashboard-action-item">
                             <div class="dashboard-action-icon stat-icon-primary">
                                 <i class="pi pi-users"></i>
                             </div>
@@ -99,24 +96,18 @@
                             <i class="pi pi-chevron-right dashboard-action-arrow"></i>
                         </router-link>
 
-                        <router-link
-                            to="/admin/posts"
-                            class="dashboard-action-item"
-                        >
-                            <div class="dashboard-action-icon stat-icon-success">
-                                <i class="pi pi-file"></i>
+                        <router-link to="/admin/events" class="dashboard-action-item">
+                            <div class="dashboard-action-icon stat-icon-info">
+                                <i class="pi pi-calendar"></i>
                             </div>
                             <div class="dashboard-action-info">
-                                <p class="dashboard-action-title">Gestionar Posts</p>
-                                <p class="dashboard-action-description">Ver y editar posts</p>
+                                <p class="dashboard-action-title">Gestionar Eventos</p>
+                                <p class="dashboard-action-description">Crear, editar y publicar eventos</p>
                             </div>
                             <i class="pi pi-chevron-right dashboard-action-arrow"></i>
                         </router-link>
 
-                        <router-link
-                            to="/admin/categories"
-                            class="dashboard-action-item"
-                        >
+                        <router-link to="/admin/categories" class="dashboard-action-item">
                             <div class="dashboard-action-icon stat-icon-success">
                                 <i class="pi pi-tags"></i>
                             </div>
@@ -127,10 +118,7 @@
                             <i class="pi pi-chevron-right dashboard-action-arrow"></i>
                         </router-link>
 
-                        <router-link
-                            to="/admin/roles"
-                            class="dashboard-action-item"
-                        >
+                        <router-link to="/admin/roles" class="dashboard-action-item">
                             <div class="dashboard-action-icon stat-icon-warning">
                                 <i class="pi pi-shield"></i>
                             </div>
@@ -141,10 +129,7 @@
                             <i class="pi pi-chevron-right dashboard-action-arrow"></i>
                         </router-link>
 
-                        <router-link
-                            to="/admin/permissions"
-                            class="dashboard-action-item"
-                        >
+                        <router-link to="/admin/permissions" class="dashboard-action-item">
                             <div class="dashboard-action-icon stat-icon-danger">
                                 <i class="pi pi-key"></i>
                             </div>
@@ -164,45 +149,33 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import useUsers from "../../composables/users";
-import usePosts from "../../composables/posts";
+import useEvents from "../../composables/events";
 import useCategories from "../../composables/categories";
 import useRoles from "../../composables/roles";
 
-const stats = ref({
-    users: 0,
-    posts: 0,
-    categories: 0,
-    roles: 0
-});
+const stats = ref({ users: 0, events: 0, categories: 0, roles: 0 });
 
 const { users, getUsers } = useUsers();
-const { posts, getPosts } = usePosts();
+const { events, getEvents } = useEvents();
 const { categories, getCategories } = useCategories();
 const { roles, getRoles } = useRoles();
 
 const loadStats = async () => {
     try {
-        await Promise.all([
-            getUsers(),
-            getPosts(),
-            getCategories(),
-            getRoles()
-        ]);
-        
+        await Promise.all([getUsers(), getEvents(), getCategories(), getRoles()]);
+        const count = (v) => v?.meta?.total ?? v?.total ?? v?.data?.length ?? v?.length ?? 0;
         stats.value = {
-            users: users.value?.total || users.value?.data?.length || 0,
-            posts: posts.value?.total || posts.value?.data?.length || 0,
-            categories: categories.value?.total || categories.value?.data?.length || 0,
-            roles: roles.value?.total || roles.value?.data?.length || 0
+            users: count(users.value),
+            events: count(events.value),
+            categories: count(categories.value),
+            roles: count(roles.value),
         };
-    } catch (error) {
-        console.error('Error loading stats:', error);
+    } catch (e) {
+        console.error('Error loading stats:', e);
     }
 };
 
-onMounted(() => {
-    loadStats();
-});
+onMounted(loadStats);
 </script>
 
 <style scoped>
@@ -214,7 +187,7 @@ onMounted(() => {
 
 .dashboard-stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 1.5rem;
 }
 
@@ -230,15 +203,49 @@ onMounted(() => {
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
+.stat-card-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.stat-card-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.75rem;
+    font-size: 1.5rem;
+    color: white;
+    flex-shrink: 0;
+}
+
+.stat-card-label {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin-bottom: 0.25rem;
+}
+
+.stat-card-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.stat-icon-primary { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+.stat-icon-info    { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+.stat-icon-success { background: linear-gradient(135deg, #10b981, #059669); }
+.stat-icon-warning { background: linear-gradient(135deg, #f59e0b, #d97706); }
+.stat-icon-danger  { background: linear-gradient(135deg, #ef4444, #dc2626); }
+
 .dashboard-actions-card {
     border-radius: 0.75rem;
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
     border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.dashboard-actions-content {
-    padding: 0.5rem;
-}
+.dashboard-actions-content { padding: 0.5rem; }
 
 .dashboard-actions-title {
     display: flex;
@@ -246,14 +253,7 @@ onMounted(() => {
     gap: 0.75rem;
     font-size: 1.25rem;
     font-weight: 700;
-    line-height: 1.75rem;
-    letter-spacing: -0.02em;
     margin-bottom: 1.5rem;
-}
-
-.dashboard-actions-title i {
-    font-size: 1.5rem;
-    opacity: 0.9;
 }
 
 .dashboard-actions-grid {
@@ -290,26 +290,19 @@ onMounted(() => {
     font-size: 1.25rem;
     flex-shrink: 0;
     color: white;
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
 }
 
-.dashboard-action-info {
-    flex: 1;
-    min-width: 0;
-}
+.dashboard-action-info { flex: 1; min-width: 0; }
 
 .dashboard-action-title {
     font-size: 1rem;
     font-weight: 600;
-    line-height: 1.5rem;
     margin-bottom: 0.25rem;
-    letter-spacing: -0.01em;
 }
 
 .dashboard-action-description {
     font-size: 0.875rem;
     opacity: 0.7;
-    line-height: 1.25rem;
 }
 
 .dashboard-action-arrow {
@@ -325,12 +318,7 @@ onMounted(() => {
 }
 
 @media (max-width: 640px) {
-    .dashboard-stats-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .dashboard-actions-grid {
-        grid-template-columns: 1fr;
-    }
+    .dashboard-stats-grid,
+    .dashboard-actions-grid { grid-template-columns: 1fr; }
 }
 </style>

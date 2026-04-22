@@ -17,9 +17,10 @@
             <!-- ===== Content Area Start ===== -->
             <div class="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
                 <!-- ===== Header Start ===== -->
-                <MainHeader 
-                    :sidebarOpen="sidebarOpen" 
+                <MainHeader
+                    :sidebarOpen="sidebarOpen"
                     :isCollapsed="isCollapsed"
+                    :breadcrumbs="breadcrumbs"
                     @toggleSidebar="toggleSidebar"
                     @toggleCollapse="toggleCollapse"
                 />
