@@ -1,13 +1,12 @@
+
 <template>
   <div class="compras-page bg-white dark:bg-gray-950 min-h-screen flex flex-col">
-    <!-- Loading State -->
     <div v-if="isLoading" class="flex items-center justify-center py-20 min-h-screen">
       <i class="pi pi-spin pi-spinner text-5xl text-blue-500"></i>
     </div>
+    
 
-    <!-- Checkout Page -->
     <div v-else-if="event?.id" class="flex-1">
-      <!-- Header with Dark Background -->
       <div class="bg-gray-900 text-white py-8">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
           <div class="flex items-center justify-between mb-4">
@@ -15,15 +14,21 @@
               <h1 class="text-3xl md:text-4xl font-bold">PROCESO DE COMPRA</h1>
               <div class="h-1 w-32 bg-blue-600 mt-2"></div>
             </div>
-            <div class="text-right">
-              <p class="text-sm text-gray-400">Tiempo restante</p>
-              <p class="text-2xl font-bold">09:08</p>
-            </div>
-          </div>
-        </div>
-      </div>
+                <div class="text-right">
+                    <p class="text-sm text-gray-400">Tiempo restante</p>
 
-      <!-- Back Button -->
+                    <vue-countdown
+                        :time="10 * 60 * 1000"
+                        v-slot="{ minutes, seconds }">
+                        <span class="text-xl font-bold">
+                        {{ minutes }}:{{ seconds.toString().padStart(2, '0') }}
+                        </span>
+                    </vue-countdown>
+                </div>
+            </div>
+        </div>
+    </div>
+
       <div class="container mx-auto px-4 sm:px-6 lg:px-8 pt-6">
         <button 
           @click="goBack"
@@ -34,14 +39,11 @@
         </button>
       </div>
 
-      <!-- Main Content: 2 Columns -->
       <div class="container mx-auto px-4 sm:px-6 lg:px-8 pb-12">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
-          <!-- LEFT COLUMN (2/3): Checkout Sections -->
           <div class="lg:col-span-2 space-y-6">
             
-            <!-- ENTREGA TICKETS -->
             <section class="bg-white dark:bg-gray-800 rounded-lg border border-slate-200 dark:border-gray-700 p-6">
               <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                 <i class="pi pi-check text-green-600"></i>
@@ -49,33 +51,77 @@
               </h2>
               <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">Los tickets se enviarán a tu correo electrónico</p>
               <div class="bg-slate-50 dark:bg-gray-700 rounded-lg p-4">
-                <p class="text-sm font-medium text-gray-900 dark:text-white">{{ userEmail }}</p>
-                <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">
-                  <a href="#" class="text-blue-600 dark:text-blue-400 hover:underline">Editar</a>
-                </p>
+                <div v-if="!editingEmail" class="flex items-center justify-between">
+                  <p class="text-sm font-medium text-gray-900 dark:text-white">{{ userEmail }}</p>
+                  <button 
+                    @click="startEditingEmail"
+                    class="text-xs text-blue-600 dark:text-blue-400 hover:underline font-medium transition-colors"
+                  >
+                    Editar
+                  </button>
+                </div>
+                <div v-else class="space-y-3">
+                  <input 
+                    v-model="emailEdit" 
+                    type="email"
+                    placeholder="Ingresa tu correo electrónico"
+                    class="w-full px-3 py-2 bg-white dark:bg-gray-600 border border-slate-300 dark:border-gray-500 rounded-lg text-gray-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-blue-500 dark:focus:border-blue-400"
+                  />
+                  <div class="flex gap-2">
+                    <button 
+                      @click="saveEmail"
+                      class="flex-1 px-3 py-2 bg-blue-600 dark:bg-blue-500 text-white text-sm font-medium rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors"
+                    >
+                      Guardar
+                    </button>
+                    <button 
+                      @click="cancelEditEmail"
+                      class="flex-1 px-3 py-2 bg-slate-300 dark:bg-gray-600 text-gray-900 dark:text-white text-sm font-medium rounded-lg hover:bg-slate-400 dark:hover:bg-gray-500 transition-colors"
+                    >
+                      Cancelar
+                    </button>
+                  </div>
+                </div>
               </div>
             </section>
 
-            <!-- EXTRAS DEL EVENTO -->
             <section class="bg-white dark:bg-gray-800 rounded-lg border border-slate-200 dark:border-gray-700 p-6">
               <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4">EXTRAS DEL EVENTO</h2>
               <div class="space-y-4">
-                <label class="flex items-start gap-4 p-4 rounded-lg border border-slate-200 dark:border-gray-600 hover:border-blue-500 cursor-pointer transition-colors">
-                  <input type="radio" name="extras" value="none" class="mt-1" checked>
+                <label class="flex items-start gap-4 p-4 rounded-lg border border-slate-200 dark:border-gray-600 hover:border-blue-500 cursor-pointer transition-colors" :class="{ 'border-blue-500 bg-blue-50 dark:bg-blue-900/20': earlyEntrySelected }">
+                  <input type="checkbox" class="mt-1" v-model="earlyEntrySelected">
                   <div class="flex-1">
-                    <p class="font-medium text-gray-900 dark:text-white">Sin extras</p>
-                    <p class="text-sm text-slate-600 dark:text-slate-400">No añadir extras a la compra</p>
+                    <p class="font-medium text-gray-900 dark:text-white">Early Entry (Entrada Anticipada)</p>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">Acceso antes que el público general</p>
+                    <p class="text-sm font-semibold text-gray-900 dark:text-white mt-2">+ 15,00 €</p>
+                  </div>
+                </label>
+
+                <label class="flex items-start gap-4 p-4 rounded-lg border border-slate-200 dark:border-gray-600 hover:border-blue-500 cursor-pointer transition-colors" :class="{ 'border-blue-500 bg-blue-50 dark:bg-blue-900/20': parkingSelected }">
+                  <input type="checkbox" class="mt-1" v-model="parkingSelected">
+                  <div class="flex-1">
+                    <p class="font-medium text-gray-900 dark:text-white">Parking Reservado</p>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">Estacionamiento garantizado cerca del evento</p>
+                    <p class="text-sm font-semibold text-gray-900 dark:text-white mt-2">+ 12,00 €</p>
+                  </div>
+                </label>
+
+                <label class="flex items-start gap-4 p-4 rounded-lg border border-slate-200 dark:border-gray-600 hover:border-blue-500 cursor-pointer transition-colors" :class="{ 'border-blue-500 bg-blue-50 dark:bg-blue-900/20': merchandiseSelected }">
+                  <input type="checkbox" class="mt-1" v-model="merchandiseSelected">
+                  <div class="flex-1">
+                    <p class="font-medium text-gray-900 dark:text-white">Pulsera o Recuerdo del Evento</p>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">Llévate un recuerdo exclusivo del evento</p>
+                    <p class="text-sm font-semibold text-gray-900 dark:text-white mt-2">+ 6,00 €</p>
                   </div>
                 </label>
               </div>
             </section>
 
-            <!-- PROTECCIÓN DE COMPRA -->
             <section class="bg-white dark:bg-gray-800 rounded-lg border border-slate-200 dark:border-gray-700 p-6">
               <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4">PROTECCIÓN DE COMPRA</h2>
               <div class="space-y-4">
-                <label class="flex items-start gap-4 p-4 rounded-lg border border-slate-200 dark:border-gray-600 hover:border-blue-500 cursor-pointer transition-colors">
-                  <input type="radio" name="insurance" value="yes" class="mt-1">
+                <label class="flex items-start gap-4 p-4 rounded-lg border border-slate-200 dark:border-gray-600 hover:border-blue-500 cursor-pointer transition-colors" :class="{ 'border-blue-500 bg-blue-50 dark:bg-blue-900/20': insuranceSelected }">
+                  <input type="radio" name="insurance" class="mt-1" v-model="insuranceSelected" :value="true">
                   <div class="flex-1">
                     <p class="font-medium text-gray-900 dark:text-white">Proteger mi compra</p>
                     <p class="text-sm text-slate-600 dark:text-slate-400">Cubre cancelaciones y cambios de fecha</p>
@@ -83,8 +129,8 @@
                   </div>
                 </label>
 
-                <label class="flex items-start gap-4 p-4 rounded-lg border border-slate-200 dark:border-gray-600 hover:border-blue-500 cursor-pointer transition-colors">
-                  <input type="radio" name="insurance" value="no" class="mt-1" checked>
+                <label class="flex items-start gap-4 p-4 rounded-lg border border-slate-200 dark:border-gray-600 hover:border-blue-500 cursor-pointer transition-colors" :class="{ 'border-blue-500 bg-blue-50 dark:bg-blue-900/20': !insuranceSelected }">
+                  <input type="radio" name="insurance" class="mt-1" v-model="insuranceSelected" :value="false">
                   <div class="flex-1">
                     <p class="font-medium text-gray-900 dark:text-white">No proteger mi compra</p>
                     <p class="text-sm text-slate-600 dark:text-slate-400">Sin cobertura adicional</p>
@@ -93,7 +139,6 @@
               </div>
             </section>
 
-            <!-- CONDICIONES DE COMPRA -->
             <section class="bg-white dark:bg-gray-800 rounded-lg border border-slate-200 dark:border-gray-700 p-6">
               <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4">CONDICIONES DE COMPRA</h2>
               <label class="flex items-start gap-3 mb-6">
@@ -115,17 +160,13 @@
             </section>
           </div>
 
-          <!-- RIGHT COLUMN (1/3): Order Summary -->
+
           <div class="lg:col-span-1">
             <div class="sticky top-6 bg-white dark:bg-gray-800 rounded-lg border border-slate-200 dark:border-gray-700 p-6">
-              
-              <!-- Total Price -->
               <div class="border-b border-slate-200 dark:border-gray-600 pb-4 mb-4">
                 <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">TOTAL</h3>
                 <p class="text-3xl font-bold text-gray-900 dark:text-white">{{ totalPriceCurrency }}</p>
               </div>
-
-              <!-- Entradas Items -->
               <div class="mb-6">
                 <h4 class="font-semibold text-gray-900 dark:text-white mb-3">ENTRADAS</h4>
                 <div class="space-y-2 text-sm">
@@ -147,7 +188,39 @@
                 </div>
               </div>
 
-              <!-- Event Info -->
+              <div class="mb-6">
+                <h4 class="font-semibold text-gray-900 dark:text-white mb-3">EXTRAS</h4>
+                <div class="space-y-2 text-sm">
+                  <div v-if="insuranceSelected" class="text-slate-600 dark:text-slate-400">
+                    <p>
+                      <span class="font-medium">Protección de Compra</span>
+                      <span class="text-gray-900 dark:text-white font-semibold float-right">12,00 €</span>
+                    </p>
+                  </div>
+                  <div v-if="earlyEntrySelected" class="text-slate-600 dark:text-slate-400">
+                    <p>
+                      <span class="font-medium">Early Entry</span>
+                      <span class="text-gray-900 dark:text-white font-semibold float-right">15,00 €</span>
+                    </p>
+                  </div>
+                  <div v-if="parkingSelected" class="text-slate-600 dark:text-slate-400">
+                    <p>
+                      <span class="font-medium">Parking Reservado</span>
+                      <span class="text-gray-900 dark:text-white font-semibold float-right">12,00 €</span>
+                    </p>
+                  </div>
+                  <div v-if="merchandiseSelected" class="text-slate-600 dark:text-slate-400">
+                    <p>
+                      <span class="font-medium">Pulsera/Recuerdo</span>
+                      <span class="text-gray-900 dark:text-white font-semibold float-right">6,00 €</span>
+                    </p>
+                  </div>
+                  <div v-if="!insuranceSelected && !earlyEntrySelected && !parkingSelected && !merchandiseSelected" class="text-slate-500 dark:text-slate-400 italic">
+                    Sin extras
+                  </div>
+                </div>
+              </div>
+
               <div class="bg-slate-50 dark:bg-gray-700 rounded-lg p-4">
                 <h4 class="font-semibold text-gray-900 dark:text-white mb-3">EVENTO</h4>
                 <div class="space-y-2 text-sm">
@@ -162,7 +235,6 @@
                 </div>
               </div>
 
-              <!-- Seat Map Placeholder -->
               <div class="mt-4 bg-slate-100 dark:bg-gray-600 rounded-lg overflow-hidden flex items-center justify-center min-h-[200px]">
                 <img 
                   v-if="event.image" 
@@ -181,7 +253,6 @@
       </div>
     </div>
 
-    <!-- Not Found State -->
     <div v-else class="flex-1 container mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
       <i class="pi pi-inbox text-6xl text-slate-300 dark:text-slate-600 mb-4"></i>
       <p class="text-slate-600 dark:text-slate-400 text-lg mb-6">Evento no encontrado</p>
@@ -202,6 +273,7 @@ import { useRouter, useRoute } from 'vue-router';
 import Button from 'primevue/button';
 import AppFooter from '@/components/AppFooter.vue';
 import useEvents from '@/composables/events';
+import VueCountdown from '@chenfengyuan/vue-countdown';
 
 const router = useRouter();
 const route = useRoute();
@@ -209,6 +281,12 @@ const { event, isLoading, getPublicEvent } = useEvents();
 
 const ticketQuantities = ref([0, 0, 0]);
 const userEmail = ref('usuario@ejemplo.com');
+const emailEdit = ref('');
+const editingEmail = ref(false);
+const insuranceSelected = ref(false);
+const earlyEntrySelected = ref(false);
+const parkingSelected = ref(false);
+const merchandiseSelected = ref(false);
 
 const ticketDetails = [
   { label: 'Front Stage Pista', price: 102 },
@@ -225,9 +303,17 @@ const ticketsSummary = computed(() => {
 });
 
 const totalPrice = computed(() => {
-  return ticketDetails.reduce((total, ticket, index) => {
+  const ticketsTotal = ticketDetails.reduce((total, ticket, index) => {
     return total + (ticket.price * ticketQuantities.value[index]);
   }, 0);
+  
+  let extrasTotal = 0;
+  if (insuranceSelected.value) extrasTotal += 12;
+  if (earlyEntrySelected.value) extrasTotal += 15;
+  if (parkingSelected.value) extrasTotal += 12;
+  if (merchandiseSelected.value) extrasTotal += 6;
+  
+  return ticketsTotal + extrasTotal;
 });
 
 const totalPriceCurrency = computed(() => {
@@ -271,10 +357,8 @@ const finalizarCompra = async () => {
     sessionStorage.removeItem('ticketQuantities');
     sessionStorage.removeItem('userEmail');
 
-    // Mostrar confirmación
     alert('✅ ¡Compra completada exitosamente! Recibirás los detalles en tu correo.');
 
-    // Redirigir a home
     router.push({ name: 'home' });
   } catch (error) {
     console.error('Error al finalizar compra:', error);
@@ -292,10 +376,27 @@ const formatDate = (dateStr) => {
   });
 };
 
+const startEditingEmail = () => {
+  emailEdit.value = userEmail.value;
+  editingEmail.value = true;
+};
+
+const saveEmail = () => {
+  if (emailEdit.value.trim()) {
+    userEmail.value = emailEdit.value.trim();
+    sessionStorage.setItem('userEmail', emailEdit.value.trim());
+    editingEmail.value = false;
+  }
+};
+
+const cancelEditEmail = () => {
+  editingEmail.value = false;
+  emailEdit.value = '';
+};
+
 onMounted(() => {
   const eventId = route.params.id;
   
-  // Get ticket quantities from sessionStorage
   const savedTickets = sessionStorage.getItem('ticketQuantities');
   if (savedTickets) {
     try {
@@ -305,13 +406,11 @@ onMounted(() => {
     }
   }
   
-  // Get user email from sessionStorage if available
   const savedEmail = sessionStorage.getItem('userEmail');
   if (savedEmail) {
     userEmail.value = savedEmail;
   }
 
-  // Load event details
   if (eventId) {
     getPublicEvent(eventId);
   }
