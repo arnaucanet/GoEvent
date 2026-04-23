@@ -44,14 +44,16 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
 
           <!-- LEFT COLUMN: Event Image / Seat Map -->
-          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-slate-200 dark:border-gray-700 overflow-hidden flex items-center justify-center min-h-[500px]">
-            <img 
-              v-if="event.image" 
-              :src="`/images/${event.image}`" 
-              :alt="event.title"
-              class="w-full h-full object-cover"
-            >
-            <div v-else class="text-center">
+          <div class="relative rounded-lg shadow-lg border overflow-hidden min-h-[500px] h-full"
+            :class="isDarkTheme ? 'bg-gray-800 border-gray-700' : 'bg-white border-slate-200'">
+            <template v-if="event.image">
+              <img
+                :src="`/images/${event.image}`"
+                :alt="event.title"
+                class="absolute inset-0 w-full h-full object-cover"
+              >
+            </template>
+            <div v-else class="absolute inset-0 flex flex-col items-center justify-center text-center">
               <i class="pi pi-image text-6xl text-slate-300 dark:text-slate-600 mb-4"></i>
               <p class="text-slate-500 dark:text-slate-400 font-medium text-lg">Imagen del Evento</p>
               <p class="text-sm text-slate-400 dark:text-slate-500 mt-2">O Mapa de Asientos</p>

@@ -16,6 +16,21 @@ const items = ref([
                 route: '/app/profile'
             }
         ]
+    },
+    {
+        label: 'Entradas',
+        items: [
+            {
+                label: 'Próximos eventos',
+                icon: 'pi pi-ticket',
+                route: '/orders'
+            },
+            {
+                label: 'Eventos pasados',
+                icon: 'pi pi-history',
+                route: '/orders/past-events'
+            }
+        ]
     }
 ]);
 </script>

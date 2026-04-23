@@ -112,6 +112,23 @@ class EventController extends Controller
         return response()->json(['message' => 'Evento eliminado correctamente'], 200);
     }
 
+    private function handleImageUpload(Request $request, ?string $oldImage = null): ?string
+    {
+        if (!$request->hasFile('image')) {
+            return null;
+        }
+
+        if ($oldImage && file_exists(public_path('images/' . $oldImage))) {
+            unlink(public_path('images/' . $oldImage));
+        }
+
+        $file = $request->file('image');
+        $filename = uniqid('event_') . '.' . $file->getClientOriginalExtension();
+        $file->move(public_path('images/events'), $filename);
+
+        return 'events/' . $filename;
+    }
+
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -127,7 +144,12 @@ class EventController extends Controller
             'featured' => ['boolean'],
             'status' => ['in:borrador,publicado,cancelado'],
             'category_id' => ['required', 'exists:categories,id'],
+            'image' => ['nullable', 'image', 'max:4096'],
         ]);
+
+        if ($imagePath = $this->handleImageUpload($request)) {
+            $data['image'] = $imagePath;
+        }
 
         $data['user_id'] = $request->user()->id;
         
@@ -141,21 +163,25 @@ class EventController extends Controller
     public function update(Request $request, Event $event)
     {
         $data = $request->validate([
-            'title' => ['sometimes', 'required', 'string', 'max:255', 'min:2'],
+            'title'       => ['sometimes', 'required', 'string', 'max:255', 'min:2'],
             'description' => ['sometimes', 'nullable', 'string', 'min:2'],
-            'city' => ['sometimes', 'nullable', 'string', 'max:100'],
-            'venue' => ['sometimes', 'nullable', 'string', 'max:150'],
-            'start_date' => ['sometimes', 'required', 'date'],
-            'end_date' => ['sometimes', 'nullable', 'date', 'after:start_date'],
-            'capacity' => ['sometimes', 'required', 'integer', 'min:1'],
-            'price' => ['sometimes', 'nullable', 'numeric', 'min:0'],
-            'featured' => ['sometimes', 'boolean'],
-            'status' => ['sometimes', 'in:borrador,publicado,cancelado'],
+            'city'        => ['sometimes', 'nullable', 'string', 'max:100'],
+            'venue'       => ['sometimes', 'nullable', 'string', 'max:150'],
+            'start_date'  => ['sometimes', 'required', 'date'],
+            'end_date'    => ['sometimes', 'nullable', 'date', 'after:start_date'],
+            'capacity'    => ['sometimes', 'required', 'integer', 'min:1'],
+            'price'       => ['sometimes', 'nullable', 'numeric', 'min:0'],
+            'featured'    => ['sometimes', 'boolean'],
+            'status'      => ['sometimes', 'in:borrador,publicado,cancelado'],
             'category_id' => ['sometimes', 'required', 'exists:categories,id'],
+            'image'       => ['sometimes', 'nullable', 'image', 'max:4096'],
         ]);
 
-        $event->update($data);
+        if ($imagePath = $this->handleImageUpload($request, $event->image)) {
+            $data['image'] = $imagePath;
+        }
 
+        $event->update($data);
         $event->load(['user', 'category']);
 
         return $event;

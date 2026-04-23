@@ -143,13 +143,13 @@
              <div class="mb-3">
                 <div class="flex items-center gap-3">
                     <label for="event-status" class="w-32">Status:</label>
-                    <Select 
-                        v-model="event.status" 
-                        :options="[{label: 'Borrador', value: 'borrador'}, {label: 'Publicado', value: 'publicado'}, {label: 'Cancelado', value: 'cancelado'}]" 
-                        optionLabel="label" 
-                        optionValue="value" 
+                    <Select
+                        v-model="event.status"
+                        :options="[{label: 'Borrador', value: 'borrador'}, {label: 'Publicado', value: 'publicado'}, {label: 'Cancelado', value: 'cancelado'}]"
+                        optionLabel="label"
+                        optionValue="value"
                         placeholder="Select status"
-                        class="w-full" 
+                        class="w-full"
                     />
                 </div>
                  <div class="text-red-400 mt-1" v-if="errors.status">
@@ -157,6 +157,32 @@
                 </div>
             </div>
 
+            <!-- IMAGE -->
+            <div class="mb-3">
+                <div class="flex items-start gap-3">
+                    <label class="w-32 mt-2">Imagen:</label>
+                    <div class="flex-1">
+                        <div
+                            class="relative border-2 border-dashed rounded-xl cursor-pointer transition-colors overflow-hidden"
+                            :class="imagePreview ? 'border-blue-400' : 'border-gray-300 hover:border-blue-400'"
+                            @click="$refs.imageInput.click()"
+                        >
+                            <img v-if="imagePreview" :src="imagePreview" class="w-full max-h-52 object-cover" />
+                            <div v-else class="flex flex-col items-center justify-center gap-2 py-10 text-gray-400">
+                                <i class="pi pi-image text-4xl"></i>
+                                <span class="text-sm font-medium">Haz clic para subir imagen</span>
+                                <span class="text-xs">PNG, JPG, WEBP — máx. 4 MB</span>
+                            </div>
+                            <button v-if="imagePreview" type="button"
+                                class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-7 h-7 flex items-center justify-center hover:bg-red-600 transition-colors"
+                                @click.stop="removeImage">
+                                <i class="pi pi-times text-xs"></i>
+                            </button>
+                        </div>
+                        <input ref="imageInput" type="file" accept="image/*" class="hidden" @change="onImageSelected" />
+                    </div>
+                </div>
+            </div>
 
             <div class="mt-4 text-right flex justify-end gap-2">
                 <RouterLink :to="{ name: 'events.index' }">
@@ -176,7 +202,7 @@
 </template>
 
 <script setup>
-import { onMounted } from "vue"
+import { ref, onMounted } from "vue"
 import useEvents from "@/composables/events"
 import useCategories from "@/composables/categories"
 
@@ -188,10 +214,22 @@ const {
     errors,
 } = useEvents()
 
-const {
-    categoryList,
-    getCategories
-} = useCategories()
+const { categoryList, getCategories } = useCategories()
+
+const imageFile = ref(null)
+const imagePreview = ref(null)
+
+const onImageSelected = (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    imageFile.value = file
+    imagePreview.value = URL.createObjectURL(file)
+}
+
+const removeImage = () => {
+    imageFile.value = null
+    imagePreview.value = null
+}
 
 onMounted(() => {
     resetEvent()
@@ -199,6 +237,6 @@ onMounted(() => {
 })
 
 const submitForm = async () => {
-    await createEvent(event.value)
+    await createEvent(event.value, imageFile.value)
 }
 </script>

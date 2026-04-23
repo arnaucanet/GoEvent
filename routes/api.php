@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\PermissionController;
 use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\ProfileController;
@@ -21,6 +22,8 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
     Route::get('events/featured', [EventController::class, 'featured']);
     Route::get('cities/list', [CityController::class, 'getList']);
     Route::get('category-list', [CategoryController::class, 'getList']);
+    Route::get('orders', [OrderController::class, 'index']);
+    Route::post('orders', [OrderController::class, 'store']);
 
     Route::apiResource('/categories', CategoryController::class);
 

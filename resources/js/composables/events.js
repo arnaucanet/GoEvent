@@ -136,14 +136,51 @@ export default function useEvents() {
         });
     };
 
-    const createEvent = async (data) => {
+    const limpiarDatos = (datos) => {
+        const resultado = {};
+
+        for (const campo in datos) {
+            const valor = datos[campo];
+
+            if (typeof valor === "boolean") {
+                resultado[campo] = valor ? "1" : "0";
+            } else {
+                resultado[campo] = valor;
+            }
+        }
+
+        return resultado;
+    };
+
+    const crearFormData = (datos, imagen) => {
+        const formData = new FormData();
+        const datosLimpios = limpiarDatos(datos);
+
+        for (const campo in datosLimpios) {
+            formData.append(campo, datosLimpios[campo]);
+        }
+
+        if (imagen) {
+            formData.append("image", imagen);
+        }
+
+        return formData;
+    };
+
+    const createEvent = async (datos, imagen = null) => {
         clearErrors();
-        const isValid = await validate(eventSchema, data);
-        if (!isValid.isValid) return false;
+        const resultadoValidacion = await validate(eventSchema, datos);
+        if (!resultadoValidacion.isValid) return false;
 
         return await withLoading(async () => {
             try {
-                await axios.post("/api/events", data);
+                if (imagen) {
+                    const formData = crearFormData(datos, imagen);
+                    await axios.post("/api/events", formData);
+                } else {
+                    await axios.post("/api/events", datos);
+                }
+
                 toast.success("Event created successfully");
                 router.push({ name: "events.index" });
             } catch (e) {
@@ -152,14 +189,23 @@ export default function useEvents() {
         });
     };
 
-    const updateEvent = async (id, data) => {
+    const updateEvent = async (id, datos, imagen = null) => {
         clearErrors();
-        const isValid = await validate(eventSchema, data);
-        if (!isValid.isValid) return false;
+        const resultadoValidacion = await validate(eventSchema, datos);
+        if (!resultadoValidacion.isValid) return false;
+
+        const datosLimpios = limpiarDatos(datos);
 
         return await withLoading(async () => {
             try {
-                await axios.put(`/api/events/${id}`, data);
+                if (imagen) {
+                    const formData = crearFormData(datosLimpios, imagen);
+                    formData.append("_method", "PUT");
+                    await axios.post(`/api/events/${id}`, formData);
+                } else {
+                    await axios.put(`/api/events/${id}`, datosLimpios);
+                }
+
                 toast.success("Event updated successfully");
                 router.push({ name: "events.index" });
             } catch (e) {

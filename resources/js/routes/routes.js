@@ -82,7 +82,18 @@ export default [
                     breadCrumb: 'Comprar Entradas',
                 },
             },
-
+            {
+                name: 'user.orders',
+                path: 'orders',
+                component: () => import('../views/user/orders/Index.vue'),
+                meta: { breadCrumb: 'Mis Entradas' },
+            },
+            {
+                name: 'user.orders.past',
+                path: 'orders/past-events',
+                component: () => import('../views/user/orders/PastEvents.vue'),
+                meta: { breadCrumb: 'Eventos Pasados' },
+            },
             {
                 path: 'login',
                 name: 'auth.login',
