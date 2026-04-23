@@ -393,6 +393,8 @@ const cancelEditEmail = () => {
 };
 
 onMounted(() => {
+  window.scrollTo(0, 0);
+  
   const eventId = route.params.id;
   
   const savedTickets = sessionStorage.getItem('ticketQuantities');
