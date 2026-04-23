@@ -393,10 +393,8 @@ const finalizarCompra = async () => {
 
   isSubmitting.value = true;
   try {
-    await new Promise(resolve => setTimeout(resolve, 800));
-
     await createOrder({
-      event_id:    route.params.id,
+      event_id:    Number(route.params.id),
       tickets:     ticketsSummary.value.filter(t => t.quantity > 0),
       extras:      selectedExtrasData.value,
       insurance:   insuranceSelected.value,
@@ -411,7 +409,6 @@ const finalizarCompra = async () => {
     router.push({ name: 'user.orders', query: { success: '1' } });
   } catch (err) {
     console.error('Error al finalizar compra:', err);
-    alert('Error al procesar la compra. Por favor intenta de nuevo.');
   } finally {
     isSubmitting.value = false;
   }
