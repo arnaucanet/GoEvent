@@ -380,21 +380,21 @@ const goBack = () => {
 };
 
 const finalizarCompra = async () => {
-  try {
-    if (!termsAccepted.value) {
-      showTermsError.value = true;
-      return;
-    }
+  if (!termsAccepted.value) {
+    showTermsError.value = true;
+    return;
+  }
 
-    const totalSeleccionadas = ticketQuantities.value.reduce((a, b) => a + b, 0);
-      if (totalSeleccionadas === 0) {
-        alert('Debes seleccionar al menos una entrada.');
-        return;
-      }
-    await new Promise(resolve => setTimeout(resolve, 800));
+  const totalSeleccionadas = ticketQuantities.value.reduce((a, b) => a + b, 0);
+  if (totalSeleccionadas === 0) {
+    alert('Debes seleccionar al menos una entrada.');
+    return;
+  }
 
   isSubmitting.value = true;
   try {
+    await new Promise(resolve => setTimeout(resolve, 800));
+
     await createOrder({
       event_id:    route.params.id,
       tickets:     ticketsSummary.value.filter(t => t.quantity > 0),
