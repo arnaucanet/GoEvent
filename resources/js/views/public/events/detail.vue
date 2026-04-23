@@ -169,6 +169,12 @@
             </div>
 
             <!-- Info Text -->
+            <div class="mb-6 p-4 rounded-lg bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800">
+              <p class="text-lg font-bold text-blue-900 dark:text-blue-200">
+                Total: <span class="text-1xl text-blue-600 dark:text-blue-400">{{ totalTicketsPriceCurrency }}</span>
+              </p>
+            </div>
+
             <p class="text-xs mb-4" :class="isDarkTheme ? 'text-slate-400' : 'text-slate-600'">
               Los precios incluyen 6,00 €–12,00 € de gastos de gestión.
               <br>
@@ -182,7 +188,7 @@
               class="flex items-center gap-2 mb-6 p-3 rounded-lg text-sm"
               :class="isDarkTheme ? 'bg-slate-700 text-slate-300' : 'bg-slate-100 text-slate-700'">
               <i class="pi pi-ticket"></i>
-              <span>× <span class="font-semibold">0</span>&nbsp;&nbsp;&nbsp;Límite de entradas por evento: 6</span>
+              <span>× <span class="font-semibold">0</span> Límite de entradas por evento: 6</span>
             </div>
 
             <!-- Try Tickets Button -->
@@ -274,7 +280,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import Button from 'primevue/button';
 import AppFooter from '@/components/AppFooter.vue';
@@ -286,7 +292,6 @@ const route = useRoute();
 const { event, isLoading, getPublicEvent } = useEvents();
 const { isDarkTheme, setDefaultMode } = useLayout();
 
-// Ticket quantities
 const ticketQuantities = ref([0, 0, 0]);
 
 const tickets = [
@@ -301,6 +306,16 @@ const incrementTicket = (index) => {
   }
 };
 
+const totalTicketsPrice = computed(() => {
+  return tickets.reduce((total, ticket, index) => {
+    return total + (ticket.price * ticketQuantities.value[index]);
+  }, 0);
+});
+
+const totalTicketsPriceCurrency = computed(() => {
+  return totalTicketsPrice.value.toFixed(2) + ' €';
+});
+
 const decrementTicket = (index) => {
   if (ticketQuantities.value[index] > 0) {
     ticketQuantities.value[index]--;
@@ -310,19 +325,8 @@ const decrementTicket = (index) => {
 const tryTickets = () => {
   const hasSelection = ticketQuantities.value.some(qty => qty > 0);
   if (hasSelection) {
-    // Guardar datos en sessionStorage para que compras.vue pueda acceder
     sessionStorage.setItem('ticketQuantities', JSON.stringify(ticketQuantities.value));
     
-    console.log('🎫 Navegando a compra con:', {
-      eventId: event.value.id,
-      tickets: ticketQuantities.value,
-      details: tickets.map((t, i) => ({
-        ...t,
-        quantity: ticketQuantities.value[i]
-      }))
-    });
-    
-    // Navegar a la página de compras
     router.push({ name: 'events.compras', params: { id: event.value.id } });
   } else {
     alert('Por favor selecciona al menos una entrada');
