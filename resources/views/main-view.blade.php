@@ -14,6 +14,8 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="{{ asset('images/favicon.svg') }}">
     <title>SQL Check</title>
 
 

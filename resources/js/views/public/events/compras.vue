@@ -18,11 +18,13 @@
                     <p class="text-sm text-gray-400">Tiempo restante</p>
 
                     <vue-countdown
-                        :time="10 * 60 * 1000"
-                        v-slot="{ minutes, seconds }">
-                        <span class="text-xl font-bold">
+                    :time="10 * 60 * 1000"
+                    v-slot="{ minutes, seconds }"
+                    @end="onCountdownEnd"
+                    >
+                    <span class="text-xl font-bold">
                         {{ minutes }}:{{ seconds.toString().padStart(2, '0') }}
-                        </span>
+                    </span>
                     </vue-countdown>
                 </div>
             </div>
@@ -124,7 +126,7 @@
             <section class="bg-white dark:bg-gray-800 rounded-lg border border-slate-200 dark:border-gray-700 p-6">
               <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4">CONDICIONES DE COMPRA</h2>
               <label class="flex items-start gap-3 mb-6">
-                <input type="checkbox" class="mt-1">
+                <input type="checkbox" v-model="termsAccepted" @change="showTermsError = false">
                 <span class="text-sm text-slate-600 dark:text-slate-400">
                   Confirmo que he leído y acepto los 
                   <a href="#" class="text-blue-600 dark:text-blue-400 hover:underline">Términos de Compra</a>
@@ -132,6 +134,9 @@
                   <a href="#" class="text-blue-600 dark:text-blue-400 hover:underline">Política de Privacidad</a>
                 </span>
               </label>
+              <div v-if="showTermsError" class="text-red-500 text-sm mb-4 font-medium">
+                Es obligatorio aceptar los Términos de Compra y la Política de Privacidad
+              </div>
               <Button 
                 label="Finalizar Compra" 
                 icon="pi pi-check"
@@ -245,9 +250,11 @@ import AppFooter from '@/components/AppFooter.vue';
 import useEvents from '@/composables/events';
 import VueCountdown from '@chenfengyuan/vue-countdown';
 
+
 const router = useRouter();
 const route = useRoute();
 const { event, isLoading, getPublicEvent } = useEvents();
+
 
 const ticketQuantities = ref([0, 0, 0]);
 const userEmail = ref('usuario@ejemplo.com');
@@ -255,6 +262,8 @@ const emailEdit = ref('');
 const editingEmail = ref(false);
 const insuranceSelected = ref(false);
 const selectedExtras = ref([]);
+const termsAccepted = ref(false);
+const showTermsError = ref(false);
 
 const ticketDetails = [
   { label: 'Front Stage Pista', price: 102 },
@@ -269,6 +278,17 @@ const ticketsSummary = computed(() => {
     quantity: ticketQuantities.value[index]
   }));
 });
+
+const onCountdownEnd = () => {
+  alert('Ha ocurrido un error: el tiempo de compra ha terminado, redirigiendo a la pagina principal...');
+
+  sessionStorage.removeItem('ticketQuantities');
+  sessionStorage.removeItem('userEmail');
+  sessionStorage.removeItem('selectedExtras');
+
+  router.push({ name: 'home' }); 
+
+};
 
 const totalPrice = computed(() => {
   const ticketsTotal = ticketDetails.reduce((total, ticket, index) => {
@@ -321,15 +341,13 @@ const goBack = () => {
 
 const finalizarCompra = async () => {
   try {
+    if (!termsAccepted.value) {
+      showTermsError.value = true;
+      return;
+    }
+
     const totalSeleccionadas = ticketQuantities.value.reduce((a, b) => a + b, 0);
-    
-    console.log('🎫 Compra finalizada:', {
-      entradas: ticketsSummary.value.filter(t => t.quantity > 0),
-      total: totalPrice.value,
-      email: userEmail.value,
-      totalTickets: totalSeleccionadas,
-      extras: selectedExtrasData.value
-    });
+
 
     await new Promise(resolve => setTimeout(resolve, 800));
 
@@ -342,7 +360,7 @@ const finalizarCompra = async () => {
     router.push({ name: 'home' });
   } catch (error) {
     console.error('Error al finalizar compra:', error);
-    alert('❌ Error al procesar la compra. Por favor intenta de nuevo.');
+    alert('Error al procesar la compra. Por favor intenta de nuevo.');
   }
 };
 
