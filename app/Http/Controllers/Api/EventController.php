@@ -23,8 +23,8 @@ class EventController extends Controller
 
     public function publicList(Request $request)
     {
-        $limit = (int) $request->query('limit', 12);
-        $limit = max(1, min($limit, 24));
+        $perPage = (int) $request->query('per_page', $request->query('limit', 12));
+        $perPage = max(1, min($perPage, 50));
 
         $query = $this->publicEventsQuery();
 
@@ -61,9 +61,14 @@ class EventController extends Controller
             $query->where('start_date', '<=', $dateTo);
         }
 
-        $events = $query->limit($limit)->get();
+        $sort = $request->query('sort', 'start_date');
+        $direction = strtolower($request->query('direction', 'asc')) === 'desc' ? 'desc' : 'asc';
+        $allowedSorts = ['start_date', 'title', 'price', 'capacity', 'created_at'];
+        if (in_array($sort, $allowedSorts, true)) {
+            $query->reorder($sort, $direction);
+        }
 
-        return response()->json($events);
+        return $query->paginate($perPage);
     }
 
     public function publicShow(int $id)
