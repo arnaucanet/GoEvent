@@ -82,6 +82,17 @@
       </div>
     </div>
 
+    <!-- Paginator -->
+    <Paginator
+      v-if="!isLoading && pagination.total > pagination.per_page"
+      class="mt-8 !bg-transparent"
+      :rows="pagination.per_page"
+      :total-records="pagination.total"
+      :first="(pagination.current_page - 1) * pagination.per_page"
+      :rows-per-page-options="[12, 24, 48]"
+      @page="onPage"
+    />
+
     <!-- Empty State -->
     <div v-if="!isLoading && events.length === 0" class="text-center py-12">
       <i class="pi pi-inbox text-5xl text-gray-400 mb-4"></i>
@@ -92,33 +103,43 @@
 </template>
 
 <script setup>
-import { onMounted, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import Button from 'primevue/button';
+import Paginator from 'primevue/paginator';
 import useEvents from '@/composables/events';
 import { useLayout } from '@/composables/layout';
 import AppFooter from '../../../components/AppFooter.vue';
 
 const router = useRouter();
 const route = useRoute();
-const { events, getPublicEvents, isLoading } = useEvents();
+const { events, pagination, getPublicEvents, isLoading } = useEvents();
 const { isDarkTheme, setDefaultMode } = useLayout();
 
-const buildQueryParams = () => {
-  const params = {};
+const perPage = ref(12);
+
+const buildQueryParams = (page = 1) => {
+  const params = { page, per_page: perPage.value };
 
   if (route.query.q) params.q = route.query.q;
   if (route.query.city) params.city = route.query.city;
   if (route.query.category_id) params.category_id = route.query.category_id;
   if (route.query.date_from) params.date_from = route.query.date_from;
   if (route.query.date_to) params.date_to = route.query.date_to;
-  if (route.query.limit) params.limit = route.query.limit;
 
   return params;
 };
 
-const loadEvents = async () => {
-  await getPublicEvents(buildQueryParams());
+const loadEvents = async (page = 1) => {
+  await getPublicEvents(buildQueryParams(page));
+  if (typeof window !== 'undefined') {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+};
+
+const onPage = (event) => {
+  perPage.value = event.rows;
+  loadEvents(event.page + 1);
 };
 
 const formatDate = (dateStr) => {

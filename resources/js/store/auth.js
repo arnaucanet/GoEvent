@@ -1,11 +1,18 @@
 import axios from 'axios';
 import { ref } from "vue";
 import { defineStore } from "pinia";
+import { setAuthToken } from "../plugins/axios";
 
 export const authStore = defineStore("authStore", () => {
 
     let user = ref({name:''});
     let authenticated = ref(false);
+    let token = ref(null);
+
+    function setToken(newToken) {
+        token.value = newToken;
+        setAuthToken(newToken);
+    }
 
     async function login(data) {
         axios.get('/api/user').then(response => {
@@ -43,11 +50,12 @@ export const authStore = defineStore("authStore", () => {
     function logout() {
         user.value = {}
         authenticated.value = false
+        setToken(null);
     }
 
     function is(roleName) {
         return user.value.roles.some(role => role.name === roleName);
     }
 
-    return { user, authenticated, login, is, getUser,getUserSignIn, logout};
+    return { user, authenticated, token, login, is, getUser, getUserSignIn, logout, setToken };
 }, {persist: true});

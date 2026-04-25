@@ -8,6 +8,12 @@ import { useValidation } from "./useValidation";
 export default function useEvents() {
     const events = ref([]);
     const eventsList = ref([]);
+    const pagination = ref({
+        total: 0,
+        per_page: 15,
+        current_page: 1,
+        last_page: 1,
+    });
     const initialEvent = {
         title: "",
         description: "",
@@ -81,17 +87,26 @@ export default function useEvents() {
         }
     };
 
-    const getEvents = async () => {
+    const getEvents = async (params = {}) => {
         return await withLoading(async () => {
             try {
-                const response = await axios.get("/api/events");
-
-                const data = response.data.data || response.data;
+                const response = await axios.get("/api/events", { params });
+                const payload = response.data;
+                const data = payload.data ?? payload;
                 events.value = data;
                 eventsList.value = data.map((e) => ({
                     id: e.id,
-                    name: e.name,
+                    name: e.title ?? e.name,
                 }));
+                if (payload.meta || payload.current_page !== undefined) {
+                    const meta = payload.meta ?? payload;
+                    pagination.value = {
+                        total: meta.total ?? data.length,
+                        per_page: meta.per_page ?? data.length,
+                        current_page: meta.current_page ?? 1,
+                        last_page: meta.last_page ?? 1,
+                    };
+                }
             } catch (e) {
                 toast.error("Error loading events");
             }
@@ -102,12 +117,22 @@ export default function useEvents() {
         return await withLoading(async () => {
             try {
                 const response = await axios.get("/api/events/public", { params });
-                const data = response.data.data || response.data;
+                const payload = response.data;
+                const data = payload.data ?? payload;
                 events.value = data;
                 eventsList.value = data.map((e) => ({
                     id: e.id,
                     name: e.title,
                 }));
+                if (payload.meta || payload.current_page !== undefined) {
+                    const meta = payload.meta ?? payload;
+                    pagination.value = {
+                        total: meta.total ?? data.length,
+                        per_page: meta.per_page ?? data.length,
+                        current_page: meta.current_page ?? 1,
+                        last_page: meta.last_page ?? 1,
+                    };
+                }
             } catch (e) {
                 toast.error("Error loading events");
             }
@@ -235,6 +260,7 @@ export default function useEvents() {
         events,
         event,
         eventsList,
+        pagination,
         isLoading,
         errors,
         hasError,

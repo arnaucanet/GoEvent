@@ -51,6 +51,9 @@ export default function useAuth() {
 
         await axios.post('/login', loginForm)
             .then(async response => {
+                if (response.data?.token) {
+                    auth.setToken(response.data.token)
+                }
                 await auth.getUser()
                 //await store.dispatch('auth/getUser')
                 await loginUser()
