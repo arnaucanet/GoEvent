@@ -37,7 +37,7 @@
           <div class="flex flex-wrap gap-6">
             <div class="flex items-center gap-2">
               <i class="pi pi-map-marker"></i>
-              <span>{{ event.venueRelation?.city || '-' }}</span>
+              <span>{{ event.venueRelation?.city || event.venue_relation?.city || '-' }}</span>
             </div>
             <div class="flex items-center gap-2">
               <i class="pi pi-tag"></i>
@@ -304,7 +304,9 @@
               </div>
               <div>
                 <h3 class="font-semibold mb-1" :class="isDarkTheme ? 'text-white' : 'text-gray-900'">Ubicación</h3>
-                <p :class="isDarkTheme ? 'text-slate-400' : 'text-slate-600'">{{ event.venueRelation?.name }}<span>{{ event.venueRelation?.city || event.venue_relation?.city || '-' }}</span></p>
+                <p :class="isDarkTheme ? 'text-slate-400' : 'text-slate-600'">{{ event.venueRelation?.name || event.venue_relation?.name || '-' }},
+                  <span>{{ event.venueRelation?.city || event.venue_relation?.city || '-' }}</span>
+                </p>
               </div>
             </div>
           </div>
