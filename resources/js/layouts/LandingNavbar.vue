@@ -204,6 +204,12 @@
                             <Button label="Ir al Dashboard" icon="pi pi-th-large" outlined @click="navigateToDashboard" />
                             <div class="border-t border-gray-200 dark:border-gray-700 pt-2">
                                 <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 px-1">Entradas</p>
+                                <button @click="() => { visibleMobileMenu = false; router.push('/my-events') }"
+                                    class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors"
+                                    :class="isDarkTheme ? 'text-slate-300 hover:bg-slate-700' : 'text-slate-700 hover:bg-blue-50 hover:text-blue-700'">
+                                    <i class="pi pi-ticket text-gray-400"></i>
+                                    Mis eventos
+                                </button>
                                 <button @click="() => { visibleMobileMenu = false; router.push('/orders') }"
                                     class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors"
                                     :class="isDarkTheme ? 'text-slate-300 hover:bg-slate-700' : 'text-slate-700 hover:bg-blue-50 hover:text-blue-700'">
@@ -292,6 +298,7 @@ const items = computed(() => [
             },
             { label: 'Mi Panel', icon: 'pi pi-th-large', route: '/app' },
             { separator: true },
+            { label: 'Mis eventos',  icon: 'pi pi-ticket', command: () => router.push('/my-events') },
             { label: 'Próximos eventos', icon: 'pi pi-ticket', command: () => router.push('/orders') },
             { label: 'Eventos pasados',  icon: 'pi pi-history', command: () => router.push('/orders/past-events') },
             { separator: true },

@@ -94,21 +94,23 @@
                 </div>
             </div>
 
-            <!-- CITY -->
+            <!-- VENUE -->
             <div class="mb-3">
                 <div class="flex items-center gap-3">
-                    <label for="event-city" class="w-32">City:</label>
-                    <InputText
-                        v-model="event.city"
-                        id="event-city"
-                        type="text"
-                        size="small"
-                        :invalid="!!errors.city"
+                    <label for="event-venue" class="w-32">Recinto:</label>
+                    <Select
+                        v-model="event.venue_id"
+                        :options="venueList"
+                        :optionLabel="(v) => `${v.name} — ${v.city} (aforo ${v.capacity})`"
+                        optionValue="id"
+                        placeholder="Selecciona un recinto"
                         class="w-full"
+                        :class="{'p-invalid': !!errors.venue_id}"
+                        filter
                     />
                 </div>
-                <div class="text-red-400 mt-1" v-if="errors.city">
-                    {{ errors.city }}
+                <div class="text-red-400 mt-1" v-if="errors.venue_id">
+                    {{ errors.venue_id }}
                 </div>
             </div>
 
@@ -205,6 +207,7 @@
 import { ref, onMounted } from "vue"
 import useEvents from "@/composables/events"
 import useCategories from "@/composables/categories"
+import useVenues from "@/composables/venues"
 
 const {
     event,
@@ -215,6 +218,7 @@ const {
 } = useEvents()
 
 const { categoryList, getCategories } = useCategories()
+const { venueList, getVenueList } = useVenues()
 
 const imageFile = ref(null)
 const imagePreview = ref(null)
@@ -234,6 +238,7 @@ const removeImage = () => {
 onMounted(() => {
     resetEvent()
     getCategories()
+    getVenueList()
 })
 
 const submitForm = async () => {

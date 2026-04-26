@@ -98,18 +98,38 @@
             <div class="mb-3">
                 <div class="flex items-center gap-3">
                     <label for="event-category" class="w-32">Category:</label>
-                    <Select 
-                        v-model="event.category_id" 
-                        :options="categoryList" 
-                        optionLabel="name" 
-                        optionValue="id" 
-                        placeholder="Select a category" 
+                    <Select
+                        v-model="event.category_id"
+                        :options="categoryList"
+                        optionLabel="name"
+                        optionValue="id"
+                        placeholder="Select a category"
                         class="w-full"
                         :class="{'p-invalid': !!errors.category_id}"
                     />
                 </div>
                 <div class="text-red-400 mt-1" v-if="errors.category_id">
                     {{ errors.category_id }}
+                </div>
+            </div>
+
+            <!-- VENUE -->
+            <div class="mb-3">
+                <div class="flex items-center gap-3">
+                    <label for="event-venue" class="w-32">Recinto:</label>
+                    <Select
+                        v-model="event.venue_id"
+                        :options="venueList"
+                        :optionLabel="(v) => `${v.name} — ${v.city} (aforo ${v.capacity})`"
+                        optionValue="id"
+                        placeholder="Selecciona un recinto"
+                        class="w-full"
+                        :class="{'p-invalid': !!errors.venue_id}"
+                        filter
+                    />
+                </div>
+                <div class="text-red-400 mt-1" v-if="errors.venue_id">
+                    {{ errors.venue_id }}
                 </div>
             </div>
 
@@ -191,10 +211,12 @@ import { ref, computed, onMounted } from "vue"
 import { useRoute } from "vue-router"
 import useEvents from "@/composables/events"
 import useCategories from "@/composables/categories"
+import useVenues from "@/composables/venues"
 
 const route = useRoute()
 const { event, getEvent, updateEvent, isLoading, errors } = useEvents()
 const { categoryList, getCategories } = useCategories()
+const { venueList, getVenueList } = useVenues()
 
 const imageFile = ref(null)
 const imagePreview = ref(null)
@@ -219,7 +241,7 @@ const removeImage = () => {
 }
 
 onMounted(async () => {
-    await getCategories()
+    await Promise.all([getCategories(), getVenueList()])
     await getEvent(route.params.id)
     if (event.value.start_date) event.value.start_date = event.value.start_date.substring(0, 16).replace(' ', 'T')
     if (event.value.end_date)   event.value.end_date   = event.value.end_date.substring(0, 16).replace(' ', 'T')

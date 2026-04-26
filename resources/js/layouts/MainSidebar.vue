@@ -131,7 +131,11 @@ const menuModel = computed(() => {
             label: 'Contenido',
             items: [
                 { label: 'Categorías', icon: 'pi pi-tags', route: '/admin/categories', permission: 'category-list' },
-                { label: 'Eventos', icon: 'pi pi-calendar', route: '/admin/events', permission: 'event-list' }
+                { label: 'Eventos', icon: 'pi pi-calendar', route: '/admin/events', permission: 'event-list' },
+                { label: 'Recintos', icon: 'pi pi-building', route: '/admin/venues', permission: 'venue-list' },
+                { label: 'Tipos de evento', icon: 'pi pi-bookmark', route: '/admin/event-types', permission: 'event-type-list' },
+                { label: 'Artistas', icon: 'pi pi-user', route: '/admin/artists', permission: 'artist-list' },
+                { label: 'Inscripciones', icon: 'pi pi-id-card', route: '/admin/registrations', permission: 'registration-list' }
             ]
         }
     ];
