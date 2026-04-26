@@ -157,15 +157,15 @@
         <section class="container mx-auto px-4 sm:px-6 lg:px-8 pb-14 sm:pb-20">
             <div class="rounded-3xl p-6 sm:p-10 cta-bg text-white">
                 <div class="max-w-3xl">
-                    <h3 class="text-2xl sm:text-3xl font-black mb-3">No te pierdas el próximo gran evento</h3>
+                    <h3 class="text-2xl sm:text-3xl font-black mb-3">No te pierdas tus próximos eventos</h3>
                     <p class="text-white/90 mb-6">
-                        Crea tu cuenta y recibe alertas personalizadas cuando salgan nuevas fechas en tu ciudad.
+                       Administra tus tus inscripciones y tus eventos favoritos con un solo click.
                     </p>
                     <div class="flex flex-wrap gap-3">
-                        <Button label="Ir a mi panel"
+                        <Button label="Ir a mis eventos"
                             class="w-full mt-auto !bg-blue-400 !border-blue-400 hover:!bg-blue-500" :pt="{
                                 label: { class: '!text-white' },
-                            }" />
+                            }" @click="router.push('/my-events')" />
                     </div>
                 </div>
             </div>

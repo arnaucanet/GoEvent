@@ -89,6 +89,13 @@ export default [
                 meta: { breadCrumb: 'Mis Entradas' },
             },
             {
+                name: 'user.misEventos',
+                path: 'my-events',
+                component: () => import('../views/user/MisEventos.vue'),
+                beforeEnter: requireLogin,
+                meta: { breadCrumb: 'Mis Eventos' },
+            },
+            {
                 name: 'user.orders.past',
                 path: 'orders/past-events',
                 component: () => import('../views/user/orders/PastEvents.vue'),
@@ -223,6 +230,31 @@ export default [
                         }
                     }
                 ]
+            },
+
+            {
+                name: 'venues.index',
+                path: 'venues',
+                component: () => import('../views/admin/venues/Index.vue'),
+                meta: { breadCrumb: 'Recintos', hideBreadcrumb: true },
+            },
+            {
+                name: 'event-types.index',
+                path: 'event-types',
+                component: () => import('../views/admin/eventTypes/Index.vue'),
+                meta: { breadCrumb: 'Tipos de evento', hideBreadcrumb: true },
+            },
+            {
+                name: 'artists.index',
+                path: 'artists',
+                component: () => import('../views/admin/artists/Index.vue'),
+                meta: { breadCrumb: 'Artistas', hideBreadcrumb: true },
+            },
+            {
+                name: 'registrations.index',
+                path: 'registrations',
+                component: () => import('../views/admin/registrations/Index.vue'),
+                meta: { breadCrumb: 'Inscripciones', hideBreadcrumb: true },
             },
 
             {

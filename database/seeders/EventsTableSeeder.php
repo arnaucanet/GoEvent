@@ -15,7 +15,7 @@ class EventsTableSeeder extends Seeder
     public function run()
     {
         if (\App\Models\User::count() > 0 && \App\Models\Category::count() > 0) {
-            Event::factory()->count(10)->create();
+            Event::factory()->count(50)->create();
 
             if ($this->command) {
                 $this->command->info('10 events seeded successfully.');

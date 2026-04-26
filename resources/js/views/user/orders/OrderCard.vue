@@ -60,9 +60,9 @@
               <i class="pi pi-calendar text-blue-500"></i>
               {{ formatDate(order.event?.start_date) }}
             </span>
-            <span v-if="order.event?.city" class="flex items-center gap-1.5">
+            <span v-if="venueLabel" class="flex items-center gap-1.5">
               <i class="pi pi-map-marker text-blue-500"></i>
-              {{ order.event.city }}<span v-if="order.event.venue">, {{ order.event.venue }}</span>
+              {{ venueLabel }}
             </span>
           </div>
         </div>
@@ -105,14 +105,21 @@
 </template>
 
 <script setup>
+import { computed, toRefs } from 'vue';
 import { useLayout } from '@/composables/layout';
 
-defineProps({
+const props = defineProps({
   order: { type: Object, required: true },
   past:  { type: Boolean, default: false },
 });
 
 const { isDarkTheme } = useLayout();
+
+const venueLabel = computed(() => {
+  const venue = props.order.event.venue_relation;
+  if (!venue) return '';
+  return venue.city ? `${venue.name}, ${venue.city}` : venue.name;
+});
 
 const formatDate = (dateStr) => {
   if (!dateStr) return '—';

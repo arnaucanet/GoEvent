@@ -55,6 +55,28 @@ class User extends Authenticatable implements HasMedia
         $this->notify(new UserResetPasswordNotification($token));
     }
 
+    public function organizedEvents()
+    {
+        return $this->hasMany(Event::class, 'organizer_id');
+    }
+
+    public function registrations()
+    {
+        return $this->hasMany(Registration::class);
+    }
+
+    public function registeredEvents()
+    {
+        return $this->belongsToMany(Event::class, 'registrations')
+            ->withPivot('status')
+            ->withTimestamps();
+    }
+
+    public function favoriteEvents()
+    {
+        return $this->belongsToMany(Event::class, 'favorites')->withTimestamps();
+    }
+
     
 
 

@@ -21,11 +21,23 @@
       <!-- Header Section -->
       <div class="py-6">
         <div class="bg-blue-600 text-white rounded-xl p-8">
-          <h1 class="text-3xl md:text-4xl font-bold mb-4">{{ event.title }}</h1>
+          <div class="flex items-start justify-between gap-4">
+            <h1 class="text-3xl md:text-4xl font-bold mb-4">{{ event.title }}</h1>
+            <button
+              v-if="isAuthenticated"
+              type="button"
+              class="rounded-full bg-white/15 hover:bg-white/25 transition p-3 disabled:opacity-50"
+              :title="isFavorite ? 'Quitar de favoritos' : 'Añadir a favoritos'"
+              :disabled="isToggling"
+              @click="onToggleFavorite"
+            >
+              <i :class="['pi', isFavorite ? 'pi-heart-fill text-yellow-300' : 'pi-heart', 'text-2xl']"></i>
+            </button>
+          </div>
           <div class="flex flex-wrap gap-6">
             <div class="flex items-center gap-2">
               <i class="pi pi-map-marker"></i>
-              <span>{{ event.city || '-' }}</span>
+              <span>{{ event.venueRelation.city || '-' }}</span>
             </div>
             <div class="flex items-center gap-2">
               <i class="pi pi-tag"></i>
@@ -35,6 +47,49 @@
               <i class="pi pi-star-fill text-yellow-300"></i>
               <span>Evento Destacado</span>
             </div>
+          </div>
+
+          <!-- Types & Artists badges -->
+          <div v-if="(event.types && event.types.length) || (event.artists && event.artists.length)" class="mt-5 flex flex-wrap gap-2">
+            <span
+              v-for="type in event.types"
+              :key="'t-' + type.id"
+              class="px-3 py-1 rounded-full text-xs font-semibold bg-white/20 text-white"
+            >
+              <i class="pi pi-bookmark mr-1"></i>{{ type.name }}
+            </span>
+            <span
+              v-for="artist in event.artists"
+              :key="'a-' + artist.id"
+              class="px-3 py-1 rounded-full text-xs font-semibold bg-sky-400/30 text-white"
+            >
+              <i class="pi pi-user mr-1"></i>{{ artist.name }}
+            </span>
+          </div>
+
+          <!-- Register button -->
+          <div v-if="isAuthenticated" class="mt-6">
+            <Button
+              v-if="!isRegistered"
+              :label="isRegistering ? 'Procesando...' : 'Inscribirme al evento'"
+              icon="pi pi-check-circle"
+              class="!text-white !bg-blue-400 !border-blue-400 hover:!bg-blue-500"
+              :disabled="isRegistering"
+              @click="onRegister"
+            />
+            <Button
+              v-else
+              label="Cancelar inscripción"
+              class="!text-white !bg-blue-400 !border-blue-400 hover:!bg-blue-500"
+              icon="pi pi-times-circle"
+              severity="secondary"
+              outlined
+              :disabled="isRegistering"
+              @click="onCancelRegistration"
+            />
+            <span v-if="isRegistered" class="ml-3 text-sm text-blue-100">
+              <i class="pi pi-check-circle"></i> Estás inscrito
+            </span>
           </div>
         </div>
       </div>
@@ -249,7 +304,7 @@
               </div>
               <div>
                 <h3 class="font-semibold mb-1" :class="isDarkTheme ? 'text-white' : 'text-gray-900'">Ubicación</h3>
-                <p :class="isDarkTheme ? 'text-slate-400' : 'text-slate-600'">{{ event.city || 'No especificada' }}</p>
+                <p :class="isDarkTheme ? 'text-slate-400' : 'text-slate-600'">{{ event.venueRelation?.name }}<span>{{ event.venueRelation?.city || event.venue_relation?.city || '-' }}</span></p>
               </div>
             </div>
           </div>
@@ -285,12 +340,37 @@ import { useRouter, useRoute } from 'vue-router';
 import Button from 'primevue/button';
 import AppFooter from '@/components/AppFooter.vue';
 import useEvents from '@/composables/events';
+import useEventActions from '@/composables/eventActions';
 import { useLayout } from '@/composables/layout';
+import { authStore } from '@/store/auth';
 
 const router = useRouter();
 const route = useRoute();
 const { event, isLoading, getPublicEvent } = useEvents();
+const { isToggling, isRegistering, toggleFavorite, registerToEvent, cancelRegistration } = useEventActions();
 const { isDarkTheme, setDefaultMode } = useLayout();
+const auth = authStore();
+
+const isAuthenticated = computed(() => !!auth.authenticated);
+const isFavorite = computed(() => !!event.value?.is_favorite);
+const isRegistered = computed(() => !!event.value?.is_registered);
+
+const onToggleFavorite = async () => {
+    const result = await toggleFavorite(event.value.id);
+    if (result !== null) {
+        event.value.is_favorite = result;
+    }
+};
+
+const onRegister = async () => {
+    const ok = await registerToEvent(event.value.id);
+    if (ok) event.value.is_registered = true;
+};
+
+const onCancelRegistration = async () => {
+    const ok = await cancelRegistration(event.value.id);
+    if (ok) event.value.is_registered = false;
+};
 
 const ticketQuantities = ref([0, 0, 0]);
 

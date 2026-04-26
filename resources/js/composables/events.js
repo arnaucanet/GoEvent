@@ -20,9 +20,9 @@ export default function useEvents() {
         start_date: "",
         end_date: "",
         capacity: "",
-        city: "",
+        venue_id: null,
         featured: 0,
-        status: 1,
+        status: "borrador",
         category_id: "",
     };
     const event = ref({ ...initialEvent });
@@ -63,10 +63,10 @@ export default function useEvents() {
             .number()
             .typeError("Select Category")
             .required("Category is required"),
-        city: yup
-            .string()
-            .nullable()
-            .min(2, "City must be at least 2 characters"),
+        venue_id: yup
+            .number()
+            .typeError("Select Venue")
+            .required("Venue is required"),
         status: yup
             .string()
             .oneOf(

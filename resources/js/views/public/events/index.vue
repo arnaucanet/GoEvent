@@ -20,7 +20,7 @@
 
           <div class="flex items-center gap-2 text-sm">
             <i class="pi pi-map-marker"></i>
-            <span>{{ event.city || '-' }}</span>
+            <span>{{ event.venueRelation?.city || event.venue_relation?.city || '-' }}</span>
           </div>
         </div>
 

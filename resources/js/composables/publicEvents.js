@@ -21,7 +21,7 @@ export default function usePublicEvents() {
 
         const source = visibleEvents.value.length ? visibleEvents.value : featuredEvents.value;
         const uniqueCities = source
-            .map((item) => item.city)
+            .map((item) => item.venue_relation?.city || item.venueRelation?.city)
             .filter((value) => !!value)
             .filter((value, index, array) => array.indexOf(value) === index)
             .sort((a, b) => a.localeCompare(b));
@@ -43,7 +43,7 @@ export default function usePublicEvents() {
 
     const loadCities = async () => {
         try {
-            const response = await axios.get("/api/cities/list");
+            const response = await axios.get("/api/venues/cities");
             cities.value = response.data?.data || response.data || [];
         } catch (error) {
             cities.value = [];

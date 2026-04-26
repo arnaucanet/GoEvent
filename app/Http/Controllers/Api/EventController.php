@@ -12,7 +12,7 @@ class EventController extends Controller
     private function publicEventsQuery()
     {
         return Event::query()
-            ->with(['category', 'extras'])
+            ->with(['category', 'extras', 'venueRelation', 'types', 'artists'])
             ->where('status', 'publicado')
             ->where(function ($query) {
                 $query->whereNull('end_date')
@@ -33,8 +33,10 @@ class EventController extends Controller
             $query->where(function ($innerQuery) use ($search) {
                 $innerQuery->where('title', 'like', "%{$search}%")
                     ->orWhere('description', 'like', "%{$search}%")
-                    ->orWhere('city', 'like', "%{$search}%")
-                    ->orWhere('venue', 'like', "%{$search}%")
+                    ->orWhereHas('venueRelation', function ($v) use ($search) {
+                        $v->where('name', 'like', "%{$search}%")
+                            ->orWhere('city', 'like', "%{$search}%");
+                    })
                     ->orWhereHas('category', function ($categoryQuery) use ($search) {
                         $categoryQuery->where('name', 'like', "%{$search}%");
                     });
@@ -46,9 +48,16 @@ class EventController extends Controller
             $query->where('category_id', $categoryId);
         }
 
+        $venueId = $request->query('venue_id');
+        if (!empty($venueId)) {
+            $query->where('venue_id', $venueId);
+        }
+
         $city = trim((string) $request->query('city', ''));
         if ($city !== '') {
-            $query->where('city', $city);
+            $query->whereHas('venueRelation', function ($v) use ($city) {
+                $v->where('city', $city);
+            });
         }
 
         $dateFrom = $request->query('date_from');
@@ -71,13 +80,25 @@ class EventController extends Controller
         return $query->paginate($perPage);
     }
 
-    public function publicShow(int $id)
+    public function publicShow(Request $request, int $id)
     {
         $event = $this->publicEventsQuery()
             ->whereKey($id)
             ->firstOrFail();
 
-        return response()->json($event);
+        $payload = $event->toArray();
+        if ($user = $request->user()) {
+            $payload['is_favorite'] = $user->favoriteEvents()->where('event_id', $id)->exists();
+            $payload['is_registered'] = $user->registeredEvents()
+                ->wherePivot('status', 'inscrito')
+                ->where('event_id', $id)
+                ->exists();
+        } else {
+            $payload['is_favorite'] = false;
+            $payload['is_registered'] = false;
+        }
+
+        return response()->json($payload);
     }
 
     public function featured(Request $request)
@@ -101,13 +122,13 @@ class EventController extends Controller
 
     public function index()
     {
-        $events = Event::with(['user', 'category'])->get();
+        $events = Event::with(['user', 'category', 'venueRelation'])->get();
         return $events;
     }
 
     public function show(Event $event)
     {
-        $event->load(['user', 'category']);
+        $event->load(['user', 'category', 'venueRelation', 'types', 'artists']);
         return $event;
     }
 
@@ -139,9 +160,8 @@ class EventController extends Controller
         $data = $request->validate([
             'title' => ['required', 'string', 'max:255', 'min:2'],
             'description' => ['nullable', 'string', 'min:2'],
-            'city' => ['nullable', 'string', 'max:100'],
             'extra' => ['nullable', 'string'],
-            'venue' => ['nullable', 'string', 'max:150'],
+            'venue_id' => ['required', 'exists:venues,id'],
             'start_date' => ['required', 'date'],
             'end_date' => ['nullable', 'date', 'after:start_date'],
             'capacity' => ['required', 'integer', 'min:1'],
@@ -160,26 +180,25 @@ class EventController extends Controller
         
         $event = Event::create($data);
 
-        $event->load(['user', 'category']);
-        
+        $event->load(['user', 'category', 'venueRelation']);
+
         return $event;
     }
 
     public function update(Request $request, Event $event)
     {
         $data = $request->validate([
-            'title'       => ['sometimes', 'required', 'string', 'max:255', 'min:2'],
+            'title' => ['sometimes', 'required', 'string', 'max:255', 'min:2'],
             'description' => ['sometimes', 'nullable', 'string', 'min:2'],
-            'city'        => ['sometimes', 'nullable', 'string', 'max:100'],
-            'venue'       => ['sometimes', 'nullable', 'string', 'max:150'],
-            'start_date'  => ['sometimes', 'required', 'date'],
-            'end_date'    => ['sometimes', 'nullable', 'date', 'after:start_date'],
-            'capacity'    => ['sometimes', 'required', 'integer', 'min:1'],
-            'price'       => ['sometimes', 'nullable', 'numeric', 'min:0'],
-            'featured'    => ['sometimes', 'boolean'],
-            'status'      => ['sometimes', 'in:borrador,publicado,cancelado'],
+            'venue_id' => ['sometimes', 'required', 'exists:venues,id'],
+            'start_date' => ['sometimes', 'required', 'date'],
+            'end_date' => ['sometimes', 'nullable', 'date', 'after:start_date'],
+            'capacity' => ['sometimes', 'required', 'integer', 'min:1'],
+            'price' => ['sometimes', 'nullable', 'numeric', 'min:0'],
+            'featured' => ['sometimes', 'boolean'],
+            'status' => ['sometimes', 'in:borrador,publicado,cancelado'],
             'category_id' => ['sometimes', 'required', 'exists:categories,id'],
-            'image'       => ['sometimes', 'nullable', 'image', 'max:4096'],
+            'image' => ['sometimes', 'nullable', 'image', 'max:4096'],
         ]);
 
         if ($imagePath = $this->handleImageUpload($request, $event->image)) {
@@ -187,7 +206,7 @@ class EventController extends Controller
         }
 
         $event->update($data);
-        $event->load(['user', 'category']);
+        $event->load(['user', 'category', 'venueRelation']);
 
         return $event;
     }

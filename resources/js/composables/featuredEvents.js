@@ -18,7 +18,7 @@ const mapToCard = (event) => ({
     id: event.id,
     title: event.title || "Evento sin titulo",
     description: event.description || "Sin descripcion disponible.",
-    city: event.city || "-",
+    city: event.venue_relation?.city || event.venueRelation?.city || "-",
     categoryName: event.category?.name || "General",
     startDateLabel: formatDate(event.start_date),
     capacity: event.capacity || 0,
