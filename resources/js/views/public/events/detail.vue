@@ -37,7 +37,7 @@
           <div class="flex flex-wrap gap-6">
             <div class="flex items-center gap-2">
               <i class="pi pi-map-marker"></i>
-              <span>{{ event.venueRelation.city || '-' }}</span>
+              <span>{{ event.venueRelation?.city || '-' }}</span>
             </div>
             <div class="flex items-center gap-2">
               <i class="pi pi-tag"></i>
