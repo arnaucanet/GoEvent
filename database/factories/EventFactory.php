@@ -77,21 +77,22 @@ class EventFactory extends Factory
         $startDate = $this->faker->dateTimeBetween('now', '+1 month');
         $endDate = (clone $startDate)->modify('+' . $this->faker->numberBetween(1, 48) . ' hours');
         $venue = Venue::inRandomOrder()->first() ?? Venue::factory()->create();
-        $userId = User::inRandomOrder()->value('id');
+        $user = User::inRandomOrder()->first() ?? User::factory()->create();
+        $category = Category::inRandomOrder()->first() ?? Category::factory()->create();
 
         return [
             'title' => $event['title'],
             'description' => $event['description'],
             'venue_id' => $venue->id,
-            'organizer_id' => $userId,
+            'organizer_id' => $user->id,
             'start_date' => $startDate,
             'end_date' => $endDate,
             'capacity' => $this->faker->numberBetween(20, min($venue->capacity, 200)),
             'price' => $this->faker->randomFloat(2, 0, 120),
             'featured' => $this->faker->boolean(20),
             'status' => 'publicado',
-            'user_id' => $userId,
-            'category_id' => Category::inRandomOrder()->first()->id,
+            'user_id' => $user->id,
+            'category_id' => $category->id,
         ];
     }
 }

@@ -38,7 +38,8 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
     Route::delete('favorites/{event}', [FavoriteController::class, 'destroy']);
 
     Route::get('registrations', [RegistrationController::class, 'index']);
-    Route::get('admin/registrations', [RegistrationController::class, 'adminIndex']);
+    Route::get('admin/registrations', [RegistrationController::class, 'adminIndex'])
+        ->middleware('permission:event-list');
     Route::post('registrations/{event}', [RegistrationController::class, 'store']);
     Route::put('registrations/{event}', [RegistrationController::class, 'update']);
     Route::delete('registrations/{event}', [RegistrationController::class, 'destroy']);
